@@ -26,7 +26,7 @@ public class SpecificationImpl<T> implements Specification<T> {
 	public Predicate toPredicate(Root<T> root, CriteriaQuery<?> criteriaQuery,
 			CriteriaBuilder criteriaBuilder) {
 
-		// checkFieldInDepth(root);
+		checkFieldInDepth(root);
 
 		String[] nestedKey = criteria.getKey().split("\\.");
 		Path nestedRoot = getNestedRoot(root, Arrays.asList(nestedKey));
@@ -111,21 +111,22 @@ public class SpecificationImpl<T> implements Specification<T> {
 	private void checkFieldInDepth(Root<T> root) {
 		if (criteria.getKey().split("\\.").length == 1) {
 			if (nonNull(root.getJavaType())) {
+				if (stream(root.getJavaType().getDeclaredFields())
+						.anyMatch(field -> field.getName().equals(criteria.getKey()))) {
+					return;
+				}
 				stream(root.getJavaType().getDeclaredFields()).forEach(rootField -> {
-					if (nonNull(rootField)
-							&& !rootField.getName().equals(criteria.getKey())) {
-						if (nonNull(rootField.getType().getPackageName())
-								&& rootField.getType().getPackageName()
-										.contains(root.getJavaType().getPackageName())) {
-							stream(rootField.getType().getDeclaredFields())
-									.filter(depthField -> depthField.getName()
-											.equalsIgnoreCase(criteria.getKey()))
-									.findFirst().ifPresent(field2 -> {
-										String concat = rootField.getName().concat(".")
-												.concat(field2.getName());
-										criteria.changeKey(concat);
-									});
-						}
+					if (nonNull(rootField.getType().getPackageName())
+							&& rootField.getType().getPackageName()
+									.contains(root.getJavaType().getPackageName())) {
+						stream(rootField.getType().getDeclaredFields())
+								.filter(depthField -> depthField.getName()
+										.equalsIgnoreCase(criteria.getKey()))
+								.findFirst().ifPresent(field2 -> {
+									String concat = rootField.getName().concat(".")
+											.concat(field2.getName());
+									criteria.changeKey(concat);
+								});
 					}
 				});
 			}
