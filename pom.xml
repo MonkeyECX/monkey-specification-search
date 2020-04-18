@@ -136,6 +136,14 @@
         </plugins>
     </build>
 
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub Monkey Exchange Apache Maven Packages</name>
+            <url>https://maven.pkg.github.com/MonkeyECX/monkey-specification-search</url>
+        </repository>
+    </distributionManagement>
+
     <repositories>
         <repository>
             <id>central maven repo</id>
