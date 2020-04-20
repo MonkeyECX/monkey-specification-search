@@ -12,7 +12,7 @@
 
     <groupId>br.com.monkey.ecx</groupId>
     <artifactId>monkey-specification-search</artifactId>
-    <version>0.0.1-BETA</version>
+    <version>1.0</version>
     <name>monkey-specification-search</name>
     <description>Spring Specification Search</description>
 
