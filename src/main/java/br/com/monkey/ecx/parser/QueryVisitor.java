@@ -14,7 +14,7 @@ import static java.util.Objects.nonNull;
 
 class QueryVisitor<T> extends QueryBaseVisitor<Specification<T>> {
 
-	private Pattern REGEX = Pattern.compile("^(\\*?)(.+?)(\\*?)$");
+	private final Pattern REGEX = Pattern.compile("^(\\*?)(.+?)(\\*?)$");
 
 	@Override
 	public Specification<T> visitInput(QueryParser.InputContext ctx) {
@@ -37,10 +37,10 @@ class QueryVisitor<T> extends QueryBaseVisitor<Specification<T>> {
 		Specification<T> right = visit(ctx.right);
 		String op = ctx.logicalOp.getText();
 
-		if (op.equalsIgnoreCase(SearchOperation.AND_OPERATOR)) {
+		if (op.equalsIgnoreCase(SearchOperation.AND)) {
 			return left.and(right);
 		}
-		else if (op.equalsIgnoreCase(SearchOperation.OR_OPERATOR)) {
+		else if (op.equalsIgnoreCase(SearchOperation.OR)) {
 			return left.or(right);
 		}
 		else {

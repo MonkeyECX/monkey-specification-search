@@ -32,7 +32,7 @@ public class SpecificationImpl<T> implements Specification<T> {
 		Path nestedRoot = getNestedRoot(root, Arrays.asList(nestedKey));
 		String criteriaKey = nestedKey[nestedKey.length - 1];
 
-		if (criteria.getOperation().equals(SearchOperation.EQUALITY)) {
+		if (criteria.getOperation().equals(SearchOperation.EQUAL)) {
 			if (isDate()) {
 				Expression<String> dateStringExpr = criteriaBuilder.function("date",
 						String.class, nestedRoot.get(criteriaKey));
@@ -44,7 +44,7 @@ public class SpecificationImpl<T> implements Specification<T> {
 						criteria.getValue());
 			}
 		}
-		else if (criteria.getOperation().equals(SearchOperation.NEGATION)) {
+		else if (criteria.getOperation().equals(SearchOperation.NOT)) {
 			if (isDate()) {
 				Expression<String> dateStringExpr = criteriaBuilder.function("date",
 						String.class, nestedRoot.get(criteriaKey));
@@ -56,25 +56,25 @@ public class SpecificationImpl<T> implements Specification<T> {
 						criteria.getValue());
 			}
 		}
-		else if (criteria.getOperation().equals(SearchOperation.GREATER_THAN)) {
+		else if (criteria.getOperation().equals(SearchOperation.GREATER_THAN_EQUAL)) {
 			if (isDate()) {
-				return criteriaBuilder.greaterThan(
+				return criteriaBuilder.greaterThanOrEqualTo(
 						nestedRoot.get(criteriaKey).as(Date.class),
 						formatDate(criteria.getValue()));
 			}
 			else {
-				return criteriaBuilder.greaterThan(nestedRoot.get(criteriaKey),
+				return criteriaBuilder.greaterThanOrEqualTo(nestedRoot.get(criteriaKey),
 						Double.valueOf(criteria.getValue()));
 			}
 		}
-		else if (criteria.getOperation().equals(SearchOperation.LESS_THAN)) {
+		else if (criteria.getOperation().equals(SearchOperation.LESS_THAN_EQUAL)) {
 			if (isDate()) {
-				return criteriaBuilder.lessThan(
+				return criteriaBuilder.lessThanOrEqualTo(
 						nestedRoot.get(criteriaKey).as(Date.class),
 						formatDate(criteria.getValue()));
 			}
 			else {
-				return criteriaBuilder.lessThan(nestedRoot.get(criteriaKey),
+				return criteriaBuilder.lessThanOrEqualTo(nestedRoot.get(criteriaKey),
 						Double.valueOf(criteria.getValue()));
 			}
 		}
@@ -90,15 +90,15 @@ public class SpecificationImpl<T> implements Specification<T> {
 			return criteriaBuilder.like(nestedRoot.get(criteriaKey),
 					"%" + criteria.getValue() + "%");
 		}
-		else if (criteria.getOperation().equals(SearchOperation.DOESNT_START_WITH)) {
+		else if (criteria.getOperation().equals(SearchOperation.DOES_NOT_START_WITH)) {
 			return criteriaBuilder.notLike(nestedRoot.get(criteriaKey),
 					criteria.getValue() + "%");
 		}
-		else if (criteria.getOperation().equals(SearchOperation.DOESNT_END_WITH)) {
+		else if (criteria.getOperation().equals(SearchOperation.DOES_NOT_END_WITH)) {
 			return criteriaBuilder.notLike(nestedRoot.get(criteriaKey),
 					"%" + criteria.getValue());
 		}
-		else if (criteria.getOperation().equals(SearchOperation.DOESNT_CONTAIN)) {
+		else if (criteria.getOperation().equals(SearchOperation.DOES_NOT_CONTAIN)) {
 			return criteriaBuilder.notLike(nestedRoot.get(criteriaKey),
 					"%" + criteria.getValue() + "%");
 		}

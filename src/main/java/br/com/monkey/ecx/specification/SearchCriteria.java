@@ -17,30 +17,30 @@ public class SearchCriteria {
 		if (op != null) {
 
 			boolean startsWithAsterisk = prefix != null
-					&& prefix.contains(SearchOperation.ZERO_OR_MORE_REGEX);
+					&& prefix.contains(SearchOperation.LIKE);
 			boolean endsWithAsterisk = suffix != null
-					&& suffix.contains(SearchOperation.ZERO_OR_MORE_REGEX);
+					&& suffix.contains(SearchOperation.LIKE);
 
-			if (op.equals(SearchOperation.EQUALITY) && startsWithAsterisk
+			if (op.equals(SearchOperation.EQUAL) && startsWithAsterisk
 					&& endsWithAsterisk) {
 				op = SearchOperation.CONTAINS;
 			}
-			else if (op.equals(SearchOperation.EQUALITY) && startsWithAsterisk) {
+			else if (op.equals(SearchOperation.EQUAL) && startsWithAsterisk) {
 				op = SearchOperation.ENDS_WITH;
 			}
-			else if (op.equals(SearchOperation.EQUALITY) && endsWithAsterisk) {
+			else if (op.equals(SearchOperation.EQUAL) && endsWithAsterisk) {
 				op = SearchOperation.STARTS_WITH;
 			}
 
-			if (op.equals(SearchOperation.NEGATION) && startsWithAsterisk
+			if (op.equals(SearchOperation.NOT) && startsWithAsterisk
 					&& endsWithAsterisk) {
-				op = SearchOperation.DOESNT_CONTAIN;
+				op = SearchOperation.DOES_NOT_CONTAIN;
 			}
-			else if (op.equals(SearchOperation.NEGATION) && startsWithAsterisk) {
-				op = SearchOperation.DOESNT_END_WITH;
+			else if (op.equals(SearchOperation.NOT) && startsWithAsterisk) {
+				op = SearchOperation.DOES_NOT_END_WITH;
 			}
-			else if (op.equals(SearchOperation.NEGATION) && endsWithAsterisk) {
-				op = SearchOperation.DOESNT_START_WITH;
+			else if (op.equals(SearchOperation.NOT) && endsWithAsterisk) {
+				op = SearchOperation.DOES_NOT_START_WITH;
 			}
 		}
 

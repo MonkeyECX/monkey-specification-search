@@ -2,36 +2,26 @@ package br.com.monkey.ecx.specification;
 
 public enum SearchOperation {
 
-	EQUALITY, NEGATION, GREATER_THAN, LESS_THAN, LIKE, STARTS_WITH, ENDS_WITH,
+	EQUAL, NOT, GREATER_THAN_EQUAL, LESS_THAN_EQUAL, STARTS_WITH, ENDS_WITH,
 
-	CONTAINS, DOESNT_START_WITH, DOESNT_END_WITH, DOESNT_CONTAIN;
+	CONTAINS, DOES_NOT_START_WITH, DOES_NOT_END_WITH, DOES_NOT_CONTAIN;
 
-	public static final String[] SIMPLE_OPERATION_SET = { ":", "!", ">", "<", "~" };
+	public static final String LIKE = "*";
 
-	public static final String OR_PREDICATE_FLAG = "'";
+	public static final String OR = "OR";
 
-	public static final String ZERO_OR_MORE_REGEX = "*";
-
-	public static final String OR_OPERATOR = "OR";
-
-	public static final String AND_OPERATOR = "AND";
-
-	public static final String LEFT_PARANTHESIS = "(";
-
-	public static final String RIGHT_PARANTHESIS = ")";
+	public static final String AND = "AND";
 
 	public static SearchOperation getSimpleOperation(final char input) {
 		switch (input) {
 		case ':':
-			return EQUALITY;
+			return EQUAL;
 		case '!':
-			return NEGATION;
+			return NOT;
 		case '>':
-			return GREATER_THAN;
+			return GREATER_THAN_EQUAL;
 		case '<':
-			return LESS_THAN;
-		case '~':
-			return LIKE;
+			return LESS_THAN_EQUAL;
 		default:
 			return null;
 		}
