@@ -30,6 +30,8 @@ class Product {
 
 	private Instant createdAt;
 
+	private boolean visible;
+
 	@ManyToOne(cascade = ALL)
 	private Category category;
 

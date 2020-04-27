@@ -20,6 +20,8 @@ public class SpecificationImpl<T> implements Specification<T> {
 	private static final Pattern DATE = Pattern
 			.compile("[0-9]{4}(/|-)[0-9]{1,2}(/|-)[0-9]{1,2}");
 
+	private static final Pattern BOOLEAN = Pattern.compile("true|false");
+
 	private final SearchCriteria criteria;
 
 	@Override
@@ -39,6 +41,10 @@ public class SpecificationImpl<T> implements Specification<T> {
 				return criteriaBuilder.equal(criteriaBuilder.lower(dateStringExpr),
 						formatDate(criteria.getValue()));
 			}
+			else if (isBoolean()) {
+				return criteriaBuilder.equal(nestedRoot.get(criteriaKey),
+						Boolean.valueOf(criteria.getValue()));
+			}
 			else {
 				return criteriaBuilder.equal(nestedRoot.get(criteriaKey),
 						criteria.getValue());
@@ -50,6 +56,10 @@ public class SpecificationImpl<T> implements Specification<T> {
 						String.class, nestedRoot.get(criteriaKey));
 				return criteriaBuilder.notEqual(criteriaBuilder.lower(dateStringExpr),
 						formatDate(criteria.getValue()));
+			}
+			else if (isBoolean()) {
+				return criteriaBuilder.notEqual(nestedRoot.get(criteriaKey),
+						Boolean.valueOf(criteria.getValue()));
 			}
 			else {
 				return criteriaBuilder.notEqual(nestedRoot.get(criteriaKey),
@@ -142,6 +152,10 @@ public class SpecificationImpl<T> implements Specification<T> {
 
 	private boolean isDate() {
 		return DATE.matcher(criteria.getValue()).matches();
+	}
+
+	private boolean isBoolean() {
+		return BOOLEAN.matcher(criteria.getValue()).matches();
 	}
 
 }
