@@ -40,18 +40,19 @@ class SpecificationBuilderTest {
 				.updatedAt(Instant.ofEpochMilli(1586980512000L)).build();
 
 		keyboard = Product.builder().id(1).name("Keyboard").price(99.99F).stock(10)
-				.createdAt(Instant.ofEpochMilli(1586980512000L)).category(electronics)
-				.build();
+				.createdAt(Instant.ofEpochMilli(1586980512000L)).visible(true)
+				.category(electronics).build();
 
 		mouse = Product.builder().id(2).name("Mouse").price(200.19F).stock(1)
-				.createdAt(Instant.now()).category(electronics).build();
+				.visible(true).createdAt(Instant.now()).category(electronics).build();
 
 		monitor = Product.builder().id(3).name("Monitor").price(1233.19F).stock(1)
-				.createdAt(Instant.now()).category(electronics).build();
+				.createdAt(Instant.now()).visible(true).category(electronics).build();
 
 		camera = Product.builder().id(4).name("Camera Conitere").price(2341.22F)
-				.stock(200).createdAt(Instant.now()).category(Category.builder().id(2)
-						.name("Surveillance").updatedAt(Instant.now()).build())
+				.stock(200).createdAt(Instant.now()).visible(false)
+				.category(Category.builder().id(2).name("Surveillance")
+						.updatedAt(Instant.now()).build())
 				.build();
 
 		productRepository.saveAll(asList(keyboard, mouse, monitor, camera));
@@ -183,6 +184,36 @@ class SpecificationBuilderTest {
 		Specification<Product> specification = new SpecificationsBuilder<Product>()
 				.withSearch("createdAt!2020-04-15").build();
 		assertEquals(asList(mouse, monitor, camera),
+				productRepository.findAll(specification));
+	}
+
+	@Test
+	public void should_return_product_when_find_by_visible_equal_true() {
+		Specification<Product> specification = new SpecificationsBuilder<Product>()
+				.withSearch("visible:true").build();
+		assertEquals(asList(keyboard, mouse, monitor),
+				productRepository.findAll(specification));
+	}
+
+	@Test
+	public void should_return_product_when_find_by_visible_equal_false() {
+		Specification<Product> specification = new SpecificationsBuilder<Product>()
+				.withSearch("visible:false").build();
+		assertEquals(singletonList(camera), productRepository.findAll(specification));
+	}
+
+	@Test
+	public void should_return_product_when_find_by_visible_not_equal_true() {
+		Specification<Product> specification = new SpecificationsBuilder<Product>()
+				.withSearch("visible!true").build();
+		assertEquals(singletonList(camera), productRepository.findAll(specification));
+	}
+
+	@Test
+	public void should_return_product_when_find_by_visible_not_equal_false() {
+		Specification<Product> specification = new SpecificationsBuilder<Product>()
+				.withSearch("visible!false").build();
+		assertEquals(asList(keyboard, mouse, monitor),
 				productRepository.findAll(specification));
 	}
 
