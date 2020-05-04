@@ -10,7 +10,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import static br.com.monkey.ecx.core.DateUtils.formatDate;
+import static br.com.monkey.ecx.core.DateUtils.*;
 import static java.util.Arrays.stream;
 import static java.util.Objects.nonNull;
 
@@ -70,7 +70,7 @@ public class SpecificationImpl<T> implements Specification<T> {
 			if (isDate()) {
 				return criteriaBuilder.greaterThanOrEqualTo(
 						nestedRoot.get(criteriaKey).as(Date.class),
-						formatDate(criteria.getValue()));
+						getStartOfDay(formatDate(criteria.getValue())).orElseThrow());
 			}
 			else {
 				return criteriaBuilder.greaterThanOrEqualTo(nestedRoot.get(criteriaKey),
@@ -81,7 +81,7 @@ public class SpecificationImpl<T> implements Specification<T> {
 			if (isDate()) {
 				return criteriaBuilder.lessThanOrEqualTo(
 						nestedRoot.get(criteriaKey).as(Date.class),
-						formatDate(criteria.getValue()));
+						getEndOfDay(formatDate(criteria.getValue())).orElseThrow());
 			}
 			else {
 				return criteriaBuilder.lessThanOrEqualTo(nestedRoot.get(criteriaKey),
