@@ -37,7 +37,7 @@ class SpecificationBuilderTest {
 	@BeforeEach
 	public void before() {
 		Category electronics = Category.builder().id(1).name("electronics")
-				.updatedAt(Instant.ofEpochMilli(1586980512000L)).build();
+				.updatedAt(Instant.ofEpochMilli(1587066600000L)).build();
 
 		keyboard = Product.builder().id(1).name("Keyboard").price(99.99F).stock(10)
 				.createdAt(Instant.ofEpochMilli(1586980512000L)).visible(true)
