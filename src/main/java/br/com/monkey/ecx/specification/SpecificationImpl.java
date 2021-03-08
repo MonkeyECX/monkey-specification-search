@@ -1,5 +1,6 @@
 package br.com.monkey.ecx.specification;
 
+import br.com.monkey.ecx.core.exception.BadRequestException;
 import lombok.AllArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -34,12 +35,25 @@ public class SpecificationImpl<T> implements Specification<T> {
 		Path nestedRoot = getNestedRoot(root, Arrays.asList(nestedKey));
 		String criteriaKey = nestedKey[nestedKey.length - 1];
 
+		if (nestedRoot.get(criteriaKey).getJavaType().isEnum()) {
+			Enum<?>[] enumConstants = (Enum<?>[]) nestedRoot.get(criteriaKey)
+					.getJavaType().getEnumConstants();
+			Enum<?> value = stream(enumConstants)
+					.filter(e -> e.name().equals(criteria.getValue())).findFirst()
+					.orElseThrow(() -> new BadRequestException("enum.value.not.found"));
+			criteria.addEnumValue(value);
+		}
+
 		if (criteria.getOperation().equals(SearchOperation.EQUAL)) {
 			if (isDate()) {
 				Expression<String> dateStringExpr = criteriaBuilder.function("date",
 						String.class, nestedRoot.get(criteriaKey));
 				return criteriaBuilder.equal(criteriaBuilder.lower(dateStringExpr),
 						formatDate(criteria.getValue()));
+			}
+			else if (nonNull(criteria.getEnumValue())) {
+				return criteriaBuilder.equal(nestedRoot.get(criteriaKey),
+						criteria.getEnumValue());
 			}
 			else if (isBoolean()) {
 				return criteriaBuilder.equal(nestedRoot.get(criteriaKey),
@@ -57,6 +71,10 @@ public class SpecificationImpl<T> implements Specification<T> {
 				return criteriaBuilder.notEqual(criteriaBuilder.lower(dateStringExpr),
 						formatDate(criteria.getValue()));
 			}
+			else if (nonNull(criteria.getEnumValue())) {
+				return criteriaBuilder.notEqual(nestedRoot.get(criteriaKey),
+						criteria.getEnumValue());
+			}
 			else if (isBoolean()) {
 				return criteriaBuilder.notEqual(nestedRoot.get(criteriaKey),
 						Boolean.valueOf(criteria.getValue()));
@@ -72,6 +90,9 @@ public class SpecificationImpl<T> implements Specification<T> {
 						nestedRoot.get(criteriaKey).as(Date.class),
 						getStartOfDay(formatDate(criteria.getValue())).orElseThrow());
 			}
+			else if (nonNull(criteria.getEnumValue())) {
+				throw new BadRequestException("enum.not.valid.for.operation");
+			}
 			else {
 				return criteriaBuilder.greaterThanOrEqualTo(nestedRoot.get(criteriaKey),
 						Double.valueOf(criteria.getValue()));
@@ -83,34 +104,67 @@ public class SpecificationImpl<T> implements Specification<T> {
 						nestedRoot.get(criteriaKey).as(Date.class),
 						getEndOfDay(formatDate(criteria.getValue())).orElseThrow());
 			}
+			else if (nonNull(criteria.getEnumValue())) {
+				throw new BadRequestException("enum.not.valid.for.operation");
+			}
 			else {
 				return criteriaBuilder.lessThanOrEqualTo(nestedRoot.get(criteriaKey),
 						Double.valueOf(criteria.getValue()));
 			}
 		}
 		else if (criteria.getOperation().equals(SearchOperation.STARTS_WITH)) {
-			return criteriaBuilder.like(nestedRoot.get(criteriaKey),
-					criteria.getValue() + "%");
+			if (nonNull(criteria.getEnumValue())) {
+				throw new BadRequestException("enum.not.valid.for.operation");
+			}
+			else {
+				return criteriaBuilder.like(nestedRoot.get(criteriaKey),
+						criteria.getValue() + "%");
+			}
 		}
 		else if (criteria.getOperation().equals(SearchOperation.ENDS_WITH)) {
-			return criteriaBuilder.like(nestedRoot.get(criteriaKey),
-					"%" + criteria.getValue());
+			if (nonNull(criteria.getEnumValue())) {
+				throw new BadRequestException("enum.not.valid.for.operation");
+			}
+			else {
+				return criteriaBuilder.like(nestedRoot.get(criteriaKey),
+						"%" + criteria.getValue());
+			}
 		}
 		else if (criteria.getOperation().equals(SearchOperation.CONTAINS)) {
-			return criteriaBuilder.like(nestedRoot.get(criteriaKey),
-					"%" + criteria.getValue() + "%");
+			if (nonNull(criteria.getEnumValue())) {
+				throw new BadRequestException("enum.not.valid.for.operation");
+			}
+			else {
+				return criteriaBuilder.like(nestedRoot.get(criteriaKey),
+						"%" + criteria.getValue() + "%");
+			}
 		}
 		else if (criteria.getOperation().equals(SearchOperation.DOES_NOT_START_WITH)) {
-			return criteriaBuilder.notLike(nestedRoot.get(criteriaKey),
-					criteria.getValue() + "%");
+			if (nonNull(criteria.getEnumValue())) {
+				throw new BadRequestException("enum.not.valid.for.operation");
+			}
+			else {
+				return criteriaBuilder.notLike(nestedRoot.get(criteriaKey),
+						criteria.getValue() + "%");
+			}
 		}
 		else if (criteria.getOperation().equals(SearchOperation.DOES_NOT_END_WITH)) {
-			return criteriaBuilder.notLike(nestedRoot.get(criteriaKey),
-					"%" + criteria.getValue());
+			if (nonNull(criteria.getEnumValue())) {
+				throw new BadRequestException("enum.not.valid.for.operation");
+			}
+			else {
+				return criteriaBuilder.notLike(nestedRoot.get(criteriaKey),
+						"%" + criteria.getValue());
+			}
 		}
 		else if (criteria.getOperation().equals(SearchOperation.DOES_NOT_CONTAIN)) {
-			return criteriaBuilder.notLike(nestedRoot.get(criteriaKey),
-					"%" + criteria.getValue() + "%");
+			if (nonNull(criteria.getEnumValue())) {
+				throw new BadRequestException("enum.not.valid.for.operation");
+			}
+			else {
+				return criteriaBuilder.notLike(nestedRoot.get(criteriaKey),
+						"%" + criteria.getValue() + "%");
+			}
 		}
 		else {
 			return null;

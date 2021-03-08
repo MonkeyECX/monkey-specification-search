@@ -1,5 +1,6 @@
 package br.com.monkey.ecx;
 
+import br.com.monkey.ecx.core.exception.BadRequestException;
 import br.com.monkey.ecx.specification.SpecificationsBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,6 +17,7 @@ import java.time.Instant;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DataJpaTest
 @ExtendWith(SpringExtension.class)
@@ -25,6 +27,13 @@ class SpecificationBuilderTest {
 
 	@Autowired
 	private ProductRepository productRepository;
+
+	@Autowired
+	private CategoryRepository categoryRepository;
+
+	private Category electronics;
+
+	private Category others;
 
 	private Product keyboard;
 
@@ -36,8 +45,13 @@ class SpecificationBuilderTest {
 
 	@BeforeEach
 	public void before() {
-		Category electronics = Category.builder().id(1).name("electronics")
-				.updatedAt(Instant.ofEpochMilli(1586980512000L)).build();
+		electronics = Category.builder().id(1).name("electronics")
+				.updatedAt(Instant.ofEpochMilli(1586980512000L)).type(CategoryType.TYPE)
+				.build();
+
+		others = Category.builder().id(1).name("others")
+				.updatedAt(Instant.ofEpochMilli(1586980512000L)).type(CategoryType.TYPE2)
+				.build();
 
 		keyboard = Product.builder().id(1).name("Keyboard").price(99.99F).stock(10)
 				.createdAt(Instant.ofEpochMilli(1586980512000L)).visible(true)
@@ -215,6 +229,30 @@ class SpecificationBuilderTest {
 				.withSearch("visible!false").build();
 		assertEquals(asList(keyboard, mouse, monitor),
 				productRepository.findAll(specification));
+	}
+
+	@Test
+	public void should_find_by_enum() {
+		Specification<Category> specification = new SpecificationsBuilder<Category>()
+				.withSearch("type:TYPE").build();
+		assertEquals(singletonList(electronics),
+				categoryRepository.findAll(specification));
+	}
+
+	@Test
+	public void should_find_by_enum_with_unrecognized_value() {
+		Specification<Category> specification = new SpecificationsBuilder<Category>()
+				.withSearch("type:FOO").build();
+		assertThrows(BadRequestException.class,
+				() -> categoryRepository.findAll(specification));
+	}
+
+	@Test
+	public void should_find_by_enum_with_invalid_operation() {
+		Specification<Category> specification = new SpecificationsBuilder<Category>()
+				.withSearch("type>FOO").build();
+		assertThrows(BadRequestException.class,
+				() -> categoryRepository.findAll(specification));
 	}
 
 }
