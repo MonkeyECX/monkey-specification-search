@@ -11,6 +11,8 @@ public class SearchCriteria {
 
 	private String value;
 
+	private Enum enumValue;
+
 	public SearchCriteria(final String key, final String operation, String prefix,
 			final String value, String suffix) {
 		SearchOperation op = SearchOperation.getSimpleOperation(operation.charAt(0));
@@ -51,6 +53,11 @@ public class SearchCriteria {
 
 	public SearchCriteria changeKey(String key) {
 		this.key = key;
+		return this;
+	}
+
+	public SearchCriteria addEnumValue(Enum enumValue) {
+		this.enumValue = enumValue;
 		return this;
 	}
 

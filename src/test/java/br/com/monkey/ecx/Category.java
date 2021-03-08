@@ -24,4 +24,6 @@ class Category {
 
 	private Instant updatedAt;
 
+	private CategoryType type;
+
 }
