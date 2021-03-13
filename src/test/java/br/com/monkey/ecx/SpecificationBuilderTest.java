@@ -14,8 +14,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
@@ -45,10 +44,6 @@ class SpecificationBuilderTest {
 
 	private Product monitor;
 
-	private List<Supplier> suppliersOfKeyboards;
-
-	private List<Supplier> suppliersOfMonitors;
-
 	@BeforeEach
 	public void before() {
 		electronics = Category.builder().id(1).name("electronics")
@@ -59,32 +54,38 @@ class SpecificationBuilderTest {
 				.updatedAt(Instant.ofEpochMilli(1586980512000L)).type(CategoryType.TYPE2)
 				.build();
 
-		suppliersOfKeyboards = new ArrayList<>();
-		suppliersOfKeyboards.add(Supplier.builder().id(1).name("SupplierKeyboards1")
-				.practicedPrice(BigDecimal.valueOf(150)).governmentId("32752846000174")
-				.updatedAt(Instant.ofEpochMilli(1586980512000L)).build());
-		suppliersOfKeyboards.add(Supplier.builder().id(2).name("SupplierKeyboards2")
-				.practicedPrice(BigDecimal.valueOf(145)).governmentId("01368989000153")
-				.updatedAt(Instant.ofEpochMilli(1586980512000L)).build());
-
 		keyboard = Product.builder().id(1).name("Keyboard").price(99.99F).stock(10)
-				.createdAt(Instant.ofEpochMilli(1586980512000L)).visible(true)
-				.category(electronics).suppliers(suppliersOfKeyboards).build();
+				.createdAt(Instant.ofEpochMilli(1586980512000L)).visible(
+						true)
+				.category(electronics)
+				.suppliers(Arrays.asList(
+						Supplier.builder().id(1).name("SupplierKeyboards1")
+								.practicedPrice(BigDecimal.valueOf(150))
+								.governmentId("32752846000174")
+								.updatedAt(Instant.ofEpochMilli(1586980512000L)).build(),
+						Supplier.builder().id(2).name("SupplierKeyboards2")
+								.practicedPrice(BigDecimal.valueOf(145))
+								.governmentId("01368989000153")
+								.updatedAt(Instant.ofEpochMilli(1586980512000L)).build()))
+				.build();
 
 		mouse = Product.builder().id(2).name("Mouse").price(200.19F).stock(1)
 				.visible(true).createdAt(Instant.now()).category(electronics).build();
 
-		suppliersOfMonitors = new ArrayList<>();
-		suppliersOfMonitors.add(Supplier.builder().id(3).name("SupplierMonitors1")
-				.practicedPrice(BigDecimal.valueOf(800)).governmentId("20544215000180")
-				.updatedAt(Instant.ofEpochMilli(1586980512000L)).build());
-		suppliersOfMonitors.add(Supplier.builder().id(4).name("SupplierMonitors2")
-				.practicedPrice(BigDecimal.valueOf(650)).governmentId("67119333000180")
-				.updatedAt(Instant.ofEpochMilli(1586980512000L)).build());
-
 		monitor = Product.builder().id(3).name("Monitor").price(1233.19F).stock(1)
-				.createdAt(Instant.now()).visible(true).category(electronics)
-				.suppliers(suppliersOfMonitors).build();
+				.createdAt(Instant.now()).visible(
+						true)
+				.category(
+						electronics)
+				.suppliers(Arrays.asList(Supplier.builder().id(3)
+						.name("SupplierMonitors1").practicedPrice(BigDecimal.valueOf(800))
+						.governmentId("20544215000180")
+						.updatedAt(Instant.ofEpochMilli(1586980512000L)).build(),
+						Supplier.builder().id(4).name("SupplierMonitors2")
+								.practicedPrice(BigDecimal.valueOf(650))
+								.governmentId("67119333000180")
+								.updatedAt(Instant.ofEpochMilli(1586980512000L)).build()))
+				.build();
 
 		camera = Product.builder().id(4).name("Camera Conitere").price(2341.22F)
 				.stock(200).createdAt(Instant.now()).visible(false)
