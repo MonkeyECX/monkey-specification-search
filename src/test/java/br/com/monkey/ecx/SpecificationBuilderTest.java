@@ -45,9 +45,9 @@ class SpecificationBuilderTest {
 
 	private Product monitor;
 
-	List<Supplier> suppliersOfKeyboards;
+	private List<Supplier> suppliersOfKeyboards;
 
-	List<Supplier> suppliersOfMonitors;
+	private List<Supplier> suppliersOfMonitors;
 
 	@BeforeEach
 	public void before() {
