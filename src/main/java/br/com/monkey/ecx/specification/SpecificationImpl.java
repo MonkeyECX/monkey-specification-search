@@ -37,7 +37,7 @@ public class SpecificationImpl<T> implements Specification<T> {
 		String criteriaKey = nestedKey[nestedKey.length - 1];
 
 		if (nestedRoot.getJavaType().getPackageName()
-				.equals(java.util.List.class.getPackageName())) {
+				.equals(List.class.getPackageName())) {
 			criteria.list();
 		}
 

@@ -2,7 +2,10 @@ package br.com.monkey.ecx;
 
 import lombok.*;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import java.time.Instant;
 import java.util.List;
 
@@ -34,7 +37,7 @@ class Product {
 	@ManyToOne(cascade = ALL)
 	private Category category;
 
-	@OneToMany(cascade = CascadeType.ALL)
+	@OneToMany(cascade = ALL)
 	private List<Supplier> suppliers;
 
 }

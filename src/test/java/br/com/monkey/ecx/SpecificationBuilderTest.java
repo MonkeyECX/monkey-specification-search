@@ -33,9 +33,6 @@ class SpecificationBuilderTest {
 	@Autowired
 	private CategoryRepository categoryRepository;
 
-	@Autowired
-	private SupplierRepository supplierRepository;
-
 	private Category electronics;
 
 	private Category others;
