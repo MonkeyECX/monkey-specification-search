@@ -12,12 +12,12 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @ExtendWith(SpringExtension.class)
@@ -55,13 +55,32 @@ class SpecificationBuilderTest {
 
 		keyboard = Product.builder().id(1).name("Keyboard").price(99.99F).stock(10)
 				.createdAt(Instant.ofEpochMilli(1586980512000L)).visible(true)
-				.category(electronics).build();
+				.category(electronics)
+				.suppliers(asList(
+						Supplier.builder().id(1).name("SupplierKeyboards1")
+								.practicedPrice(BigDecimal.valueOf(150))
+								.governmentId("32752846000174")
+								.updatedAt(Instant.ofEpochMilli(1586980512000L)).build(),
+						Supplier.builder().id(2).name("SupplierKeyboards2")
+								.practicedPrice(BigDecimal.valueOf(145))
+								.governmentId("01368989000153")
+								.updatedAt(Instant.ofEpochMilli(1586980512000L)).build()))
+				.build();
 
 		mouse = Product.builder().id(2).name("Mouse").price(200.19F).stock(1)
 				.visible(true).createdAt(Instant.now()).category(electronics).build();
 
 		monitor = Product.builder().id(3).name("Monitor").price(1233.19F).stock(1)
-				.createdAt(Instant.now()).visible(true).category(electronics).build();
+				.createdAt(Instant.now()).visible(true).category(electronics)
+				.suppliers(asList(Supplier.builder().id(3).name("SupplierMonitors1")
+						.practicedPrice(BigDecimal.valueOf(800))
+						.governmentId("20544215000180")
+						.updatedAt(Instant.ofEpochMilli(1586980512000L)).build(),
+						Supplier.builder().id(4).name("SupplierMonitors2")
+								.practicedPrice(BigDecimal.valueOf(650))
+								.governmentId("67119333000180")
+								.updatedAt(Instant.ofEpochMilli(1586980512000L)).build()))
+				.build();
 
 		camera = Product.builder().id(4).name("Camera Conitere").price(2341.22F)
 				.stock(200).createdAt(Instant.now()).visible(false)
@@ -253,6 +272,77 @@ class SpecificationBuilderTest {
 				.withSearch("type>FOO").build();
 		assertThrows(BadRequestException.class,
 				() -> categoryRepository.findAll(specification));
+	}
+
+	@Test
+	public void should_return_product_when_find_by_supplier_government_id_equality() {
+		Specification<Product> specification = new SpecificationsBuilder<Product>()
+				.withSearch("suppliers.governmentId:32752846000174").build();
+		assertEquals(singletonList(keyboard), productRepository.findAll(specification));
+	}
+
+	@Test
+	public void should_return_product_when_find_by_supplier_government_not_equality() {
+		Specification<Product> specification = new SpecificationsBuilder<Product>()
+				.withSearch("suppliers.governmentId!32752846000174").build();
+		assertNotEquals(singletonList(keyboard),
+				productRepository.findAll(specification));
+	}
+
+	@Test
+	public void should_return_product_when_find_by_supplier_practiced_price_greater_then() {
+		Specification<Product> specification = new SpecificationsBuilder<Product>()
+				.withSearch("suppliers.practicedPrice>500").build();
+		assertEquals(singletonList(monitor), productRepository.findAll(specification));
+	}
+
+	@Test
+	public void should_return_product_when_find_by_supplier_practiced_price_less_then() {
+		Specification<Product> specification = new SpecificationsBuilder<Product>()
+				.withSearch("suppliers.practicedPrice<600").build();
+		assertEquals(singletonList(keyboard), productRepository.findAll(specification));
+	}
+
+	@Test
+	public void should_return_product_when_find_by_supplier_by_name_starts_with() {
+		Specification<Product> specification = new SpecificationsBuilder<Product>()
+				.withSearch("suppliers.name:SupplierKey*").build();
+		assertEquals(singletonList(keyboard), productRepository.findAll(specification));
+	}
+
+	@Test
+	public void should_return_product_when_find_by_supplier_by_government_id_ends_with() {
+		Specification<Product> specification = new SpecificationsBuilder<Product>()
+				.withSearch("suppliers.governmentId:*180").build();
+		assertEquals(singletonList(monitor), productRepository.findAll(specification));
+	}
+
+	@Test
+	public void should_return_product_when_find_by_supplier_by_name_contains_with() {
+		Specification<Product> specification = new SpecificationsBuilder<Product>()
+				.withSearch("suppliers.name:*Keyboards*").build();
+		assertEquals(singletonList(keyboard), productRepository.findAll(specification));
+	}
+
+	@Test
+	public void should_return_product_when_find_by_supplier_by_name_not_starts_with() {
+		Specification<Product> specification = new SpecificationsBuilder<Product>()
+				.withSearch("suppliers.name!SupplierKeybo*").build();
+		assertEquals(singletonList(monitor), productRepository.findAll(specification));
+	}
+
+	@Test
+	public void should_return_product_when_find_by_supplier_by_government_id_not_ends_with() {
+		Specification<Product> specification = new SpecificationsBuilder<Product>()
+				.withSearch("suppliers.governmentId!*180").build();
+		assertEquals(singletonList(keyboard), productRepository.findAll(specification));
+	}
+
+	@Test
+	public void should_return_product_when_find_by_supplier_by_name_not_contains_with() {
+		Specification<Product> specification = new SpecificationsBuilder<Product>()
+				.withSearch("suppliers.name!*Monitors*").build();
+		assertEquals(singletonList(keyboard), productRepository.findAll(specification));
 	}
 
 }

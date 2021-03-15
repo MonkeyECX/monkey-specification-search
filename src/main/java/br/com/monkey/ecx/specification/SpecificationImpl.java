@@ -2,6 +2,7 @@ package br.com.monkey.ecx.specification;
 
 import br.com.monkey.ecx.core.exception.BadRequestException;
 import lombok.AllArgsConstructor;
+import org.hibernate.query.criteria.internal.path.PluralAttributePath;
 import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.criteria.*;
@@ -35,7 +36,7 @@ public class SpecificationImpl<T> implements Specification<T> {
 		Path nestedRoot = getNestedRoot(root, Arrays.asList(nestedKey));
 		String criteriaKey = nestedKey[nestedKey.length - 1];
 
-		if (nestedRoot.get(criteriaKey).getJavaType().isEnum()) {
+		if (!isList(nestedRoot) && nestedRoot.get(criteriaKey).getJavaType().isEnum()) {
 			Enum<?>[] enumConstants = (Enum<?>[]) nestedRoot.get(criteriaKey)
 					.getJavaType().getEnumConstants();
 			Enum<?> value = stream(enumConstants)
@@ -59,6 +60,12 @@ public class SpecificationImpl<T> implements Specification<T> {
 				return criteriaBuilder.equal(nestedRoot.get(criteriaKey),
 						Boolean.valueOf(criteria.getValue()));
 			}
+			else if (isList(nestedRoot)) {
+				criteriaQuery.distinct(true);
+				return criteriaBuilder.equal(root
+						.join(((PluralAttributePath) nestedRoot).getAttribute().getName())
+						.get(criteriaKey), criteria.getValue());
+			}
 			else {
 				return criteriaBuilder.equal(nestedRoot.get(criteriaKey),
 						criteria.getValue());
@@ -79,6 +86,12 @@ public class SpecificationImpl<T> implements Specification<T> {
 				return criteriaBuilder.notEqual(nestedRoot.get(criteriaKey),
 						Boolean.valueOf(criteria.getValue()));
 			}
+			else if (isList(nestedRoot)) {
+				criteriaQuery.distinct(true);
+				return criteriaBuilder.notEqual(root
+						.join(((PluralAttributePath) nestedRoot).getAttribute().getName())
+						.get(criteriaKey), criteria.getValue());
+			}
 			else {
 				return criteriaBuilder.notEqual(nestedRoot.get(criteriaKey),
 						criteria.getValue());
@@ -92,6 +105,12 @@ public class SpecificationImpl<T> implements Specification<T> {
 			}
 			else if (nonNull(criteria.getEnumValue())) {
 				throw new BadRequestException("enum.not.valid.for.operation");
+			}
+			else if (isList(nestedRoot)) {
+				criteriaQuery.distinct(true);
+				return criteriaBuilder.greaterThanOrEqualTo(root
+						.join(((PluralAttributePath) nestedRoot).getAttribute().getName())
+						.get(criteriaKey), criteria.getValue());
 			}
 			else {
 				return criteriaBuilder.greaterThanOrEqualTo(nestedRoot.get(criteriaKey),
@@ -107,6 +126,12 @@ public class SpecificationImpl<T> implements Specification<T> {
 			else if (nonNull(criteria.getEnumValue())) {
 				throw new BadRequestException("enum.not.valid.for.operation");
 			}
+			else if (isList(nestedRoot)) {
+				criteriaQuery.distinct(true);
+				return criteriaBuilder.lessThanOrEqualTo(root
+						.join(((PluralAttributePath) nestedRoot).getAttribute().getName())
+						.get(criteriaKey), criteria.getValue());
+			}
 			else {
 				return criteriaBuilder.lessThanOrEqualTo(nestedRoot.get(criteriaKey),
 						Double.valueOf(criteria.getValue()));
@@ -115,6 +140,12 @@ public class SpecificationImpl<T> implements Specification<T> {
 		else if (criteria.getOperation().equals(SearchOperation.STARTS_WITH)) {
 			if (nonNull(criteria.getEnumValue())) {
 				throw new BadRequestException("enum.not.valid.for.operation");
+			}
+			else if (isList(nestedRoot)) {
+				criteriaQuery.distinct(true);
+				return criteriaBuilder.like(root
+						.join(((PluralAttributePath) nestedRoot).getAttribute().getName())
+						.get(criteriaKey), criteria.getValue() + "%");
 			}
 			else {
 				return criteriaBuilder.like(nestedRoot.get(criteriaKey),
@@ -125,6 +156,12 @@ public class SpecificationImpl<T> implements Specification<T> {
 			if (nonNull(criteria.getEnumValue())) {
 				throw new BadRequestException("enum.not.valid.for.operation");
 			}
+			else if (isList(nestedRoot)) {
+				criteriaQuery.distinct(true);
+				return criteriaBuilder.like(root
+						.join(((PluralAttributePath) nestedRoot).getAttribute().getName())
+						.get(criteriaKey), "%" + criteria.getValue());
+			}
 			else {
 				return criteriaBuilder.like(nestedRoot.get(criteriaKey),
 						"%" + criteria.getValue());
@@ -133,6 +170,13 @@ public class SpecificationImpl<T> implements Specification<T> {
 		else if (criteria.getOperation().equals(SearchOperation.CONTAINS)) {
 			if (nonNull(criteria.getEnumValue())) {
 				throw new BadRequestException("enum.not.valid.for.operation");
+			}
+			else if (isList(nestedRoot)) {
+				criteriaQuery.distinct(true);
+				return criteriaBuilder.like(
+						root.join(((PluralAttributePath) nestedRoot).getAttribute()
+								.getName()).get(criteriaKey),
+						"%" + criteria.getValue() + "%");
 			}
 			else {
 				return criteriaBuilder.like(nestedRoot.get(criteriaKey),
@@ -143,6 +187,12 @@ public class SpecificationImpl<T> implements Specification<T> {
 			if (nonNull(criteria.getEnumValue())) {
 				throw new BadRequestException("enum.not.valid.for.operation");
 			}
+			else if (isList(nestedRoot)) {
+				criteriaQuery.distinct(true);
+				return criteriaBuilder.notLike(root
+						.join(((PluralAttributePath) nestedRoot).getAttribute().getName())
+						.get(criteriaKey), criteria.getValue() + "%");
+			}
 			else {
 				return criteriaBuilder.notLike(nestedRoot.get(criteriaKey),
 						criteria.getValue() + "%");
@@ -152,6 +202,12 @@ public class SpecificationImpl<T> implements Specification<T> {
 			if (nonNull(criteria.getEnumValue())) {
 				throw new BadRequestException("enum.not.valid.for.operation");
 			}
+			else if (isList(nestedRoot)) {
+				criteriaQuery.distinct(true);
+				return criteriaBuilder.notLike(root
+						.join(((PluralAttributePath) nestedRoot).getAttribute().getName())
+						.get(criteriaKey), "%" + criteria.getValue());
+			}
 			else {
 				return criteriaBuilder.notLike(nestedRoot.get(criteriaKey),
 						"%" + criteria.getValue());
@@ -160,6 +216,13 @@ public class SpecificationImpl<T> implements Specification<T> {
 		else if (criteria.getOperation().equals(SearchOperation.DOES_NOT_CONTAIN)) {
 			if (nonNull(criteria.getEnumValue())) {
 				throw new BadRequestException("enum.not.valid.for.operation");
+			}
+			else if (isList(nestedRoot)) {
+				criteriaQuery.distinct(true);
+				return criteriaBuilder.notLike(
+						root.join(((PluralAttributePath) nestedRoot).getAttribute()
+								.getName()).get(criteriaKey),
+						"%" + criteria.getValue() + "%");
 			}
 			else {
 				return criteriaBuilder.notLike(nestedRoot.get(criteriaKey),
@@ -210,6 +273,11 @@ public class SpecificationImpl<T> implements Specification<T> {
 
 	private boolean isBoolean() {
 		return BOOLEAN.matcher(criteria.getValue()).matches();
+	}
+
+	public boolean isList(Path nestedRoot) {
+		return nestedRoot.getJavaType().getPackageName()
+				.equals(List.class.getPackageName());
 	}
 
 }
