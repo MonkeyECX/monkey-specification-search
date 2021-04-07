@@ -2,8 +2,10 @@ package br.com.monkey.ecx.specification;
 
 import lombok.Getter;
 
+import java.io.Serializable;
+
 @Getter
-public class SearchCriteria {
+public class SearchCriteria implements Serializable {
 
 	private String key;
 
@@ -13,18 +15,14 @@ public class SearchCriteria {
 
 	private Enum enumValue;
 
-	public SearchCriteria(final String key, final String operation, String prefix,
-			final String value, String suffix) {
+	public SearchCriteria(final String key, final String operation, String prefix, final String value, String suffix) {
 		SearchOperation op = SearchOperation.getSimpleOperation(operation.charAt(0));
 		if (op != null) {
 
-			boolean startsWithAsterisk = prefix != null
-					&& prefix.contains(SearchOperation.LIKE);
-			boolean endsWithAsterisk = suffix != null
-					&& suffix.contains(SearchOperation.LIKE);
+			boolean startsWithAsterisk = prefix != null && prefix.contains(SearchOperation.LIKE);
+			boolean endsWithAsterisk = suffix != null && suffix.contains(SearchOperation.LIKE);
 
-			if (op.equals(SearchOperation.EQUAL) && startsWithAsterisk
-					&& endsWithAsterisk) {
+			if (op.equals(SearchOperation.EQUAL) && startsWithAsterisk && endsWithAsterisk) {
 				op = SearchOperation.CONTAINS;
 			}
 			else if (op.equals(SearchOperation.EQUAL) && startsWithAsterisk) {
@@ -34,8 +32,7 @@ public class SearchCriteria {
 				op = SearchOperation.STARTS_WITH;
 			}
 
-			if (op.equals(SearchOperation.NOT) && startsWithAsterisk
-					&& endsWithAsterisk) {
+			if (op.equals(SearchOperation.NOT) && startsWithAsterisk && endsWithAsterisk) {
 				op = SearchOperation.DOES_NOT_CONTAIN;
 			}
 			else if (op.equals(SearchOperation.NOT) && startsWithAsterisk) {

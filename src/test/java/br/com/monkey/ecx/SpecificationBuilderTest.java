@@ -45,47 +45,37 @@ class SpecificationBuilderTest {
 
 	@BeforeEach
 	public void before() {
-		electronics = Category.builder().id(1).name("electronics")
-				.updatedAt(Instant.ofEpochMilli(1586980512000L)).type(CategoryType.TYPE)
-				.build();
+		electronics = Category.builder().id(1).name("electronics").updatedAt(Instant.ofEpochMilli(1586980512000L))
+				.type(CategoryType.TYPE).build();
 
-		others = Category.builder().id(1).name("others")
-				.updatedAt(Instant.ofEpochMilli(1586980512000L)).type(CategoryType.TYPE2)
-				.build();
+		others = Category.builder().id(1).name("others").updatedAt(Instant.ofEpochMilli(1586980512000L))
+				.type(CategoryType.TYPE2).build();
 
 		keyboard = Product.builder().id(1).name("Keyboard").price(99.99F).stock(10)
-				.createdAt(Instant.ofEpochMilli(1586980512000L)).visible(true)
-				.category(electronics)
+				.createdAt(Instant.ofEpochMilli(1586980512000L)).visible(true).category(electronics)
 				.suppliers(asList(
-						Supplier.builder().id(1).name("SupplierKeyboards1")
-								.practicedPrice(BigDecimal.valueOf(150))
-								.governmentId("32752846000174")
-								.updatedAt(Instant.ofEpochMilli(1586980512000L)).build(),
-						Supplier.builder().id(2).name("SupplierKeyboards2")
-								.practicedPrice(BigDecimal.valueOf(145))
-								.governmentId("01368989000153")
-								.updatedAt(Instant.ofEpochMilli(1586980512000L)).build()))
+						Supplier.builder().id(1).name("SupplierKeyboards1").practicedPrice(BigDecimal.valueOf(150))
+								.governmentId("32752846000174").updatedAt(Instant.ofEpochMilli(1586980512000L)).build(),
+						Supplier.builder().id(2).name("SupplierKeyboards2").practicedPrice(BigDecimal.valueOf(145))
+								.governmentId("01368989000153").updatedAt(Instant.ofEpochMilli(1586980512000L))
+								.build()))
 				.build();
 
-		mouse = Product.builder().id(2).name("Mouse").price(200.19F).stock(1)
-				.visible(true).createdAt(Instant.now()).category(electronics).build();
+		mouse = Product.builder().id(2).name("Mouse").price(200.19F).stock(1).visible(true).createdAt(Instant.now())
+				.category(electronics).build();
 
-		monitor = Product.builder().id(3).name("Monitor").price(1233.19F).stock(1)
-				.createdAt(Instant.now()).visible(true).category(electronics)
-				.suppliers(asList(Supplier.builder().id(3).name("SupplierMonitors1")
-						.practicedPrice(BigDecimal.valueOf(800))
-						.governmentId("20544215000180")
-						.updatedAt(Instant.ofEpochMilli(1586980512000L)).build(),
-						Supplier.builder().id(4).name("SupplierMonitors2")
-								.practicedPrice(BigDecimal.valueOf(650))
-								.governmentId("67119333000180")
-								.updatedAt(Instant.ofEpochMilli(1586980512000L)).build()))
+		monitor = Product.builder().id(3).name("Monitor").price(1233.19F).stock(1).createdAt(Instant.now())
+				.visible(true).category(electronics)
+				.suppliers(asList(
+						Supplier.builder().id(3).name("SupplierMonitors1").practicedPrice(BigDecimal.valueOf(800))
+								.governmentId("20544215000180").updatedAt(Instant.ofEpochMilli(1586980512000L)).build(),
+						Supplier.builder().id(4).name("SupplierMonitors2").practicedPrice(BigDecimal.valueOf(650))
+								.governmentId("67119333000180").updatedAt(Instant.ofEpochMilli(1586980512000L))
+								.build()))
 				.build();
 
-		camera = Product.builder().id(4).name("Camera Conitere").price(2341.22F)
-				.stock(200).createdAt(Instant.now()).visible(false)
-				.category(Category.builder().id(2).name("Surveillance")
-						.updatedAt(Instant.now()).build())
+		camera = Product.builder().id(4).name("Camera Conitere").price(2341.22F).stock(200).createdAt(Instant.now())
+				.visible(false).category(Category.builder().id(2).name("Surveillance").updatedAt(Instant.now()).build())
 				.build();
 
 		productRepository.saveAll(asList(keyboard, mouse, monitor, camera));
@@ -93,74 +83,63 @@ class SpecificationBuilderTest {
 
 	@Test
 	public void should_return_product_when_find_by_name_equality() {
-		Specification<Product> specification = new SpecificationsBuilder<Product>()
-				.withSearch("name:Keyboard").build();
+		Specification<Product> specification = new SpecificationsBuilder<Product>().withSearch("name:Keyboard").build();
 
 		assertEquals(singletonList(keyboard), productRepository.findAll(specification));
 	}
 
 	@Test
 	public void should_return_product_when_find_by_name_starts_with() {
-		Specification<Product> specification = new SpecificationsBuilder<Product>()
-				.withSearch("name:Mo*").build();
+		Specification<Product> specification = new SpecificationsBuilder<Product>().withSearch("name:Mo*").build();
 
 		assertEquals(asList(mouse, monitor), productRepository.findAll(specification));
 	}
 
 	@Test
 	public void should_return_product_when_find_by_name_ends_with() {
-		Specification<Product> specification = new SpecificationsBuilder<Product>()
-				.withSearch("name:*tor").build();
+		Specification<Product> specification = new SpecificationsBuilder<Product>().withSearch("name:*tor").build();
 
 		assertEquals(singletonList(monitor), productRepository.findAll(specification));
 	}
 
 	@Test
 	public void should_return_product_when_find_by_name_contains_with() {
-		Specification<Product> specification = new SpecificationsBuilder<Product>()
-				.withSearch("name:*nit*").build();
+		Specification<Product> specification = new SpecificationsBuilder<Product>().withSearch("name:*nit*").build();
 
 		assertEquals(asList(monitor, camera), productRepository.findAll(specification));
 	}
 
 	@Test
 	public void should_return_product_when_find_by_name_not_starts_with() {
-		Specification<Product> specification = new SpecificationsBuilder<Product>()
-				.withSearch("name!Mo*").build();
+		Specification<Product> specification = new SpecificationsBuilder<Product>().withSearch("name!Mo*").build();
 
 		assertEquals(asList(keyboard, camera), productRepository.findAll(specification));
 	}
 
 	@Test
 	public void should_return_product_when_find_by_name_not_ends_with() {
-		Specification<Product> specification = new SpecificationsBuilder<Product>()
-				.withSearch("name!*tor").build();
+		Specification<Product> specification = new SpecificationsBuilder<Product>().withSearch("name!*tor").build();
 
-		assertEquals(asList(keyboard, mouse, camera),
-				productRepository.findAll(specification));
+		assertEquals(asList(keyboard, mouse, camera), productRepository.findAll(specification));
 	}
 
 	@Test
 	public void should_return_product_when_find_by_name_not_contains_with() {
-		Specification<Product> specification = new SpecificationsBuilder<Product>()
-				.withSearch("name!*nit*").build();
+		Specification<Product> specification = new SpecificationsBuilder<Product>().withSearch("name!*nit*").build();
 
 		assertEquals(asList(keyboard, mouse), productRepository.findAll(specification));
 	}
 
 	@Test
 	public void should_return_product_when_find_by_price_greater_then() {
-		Specification<Product> specification = new SpecificationsBuilder<Product>()
-				.withSearch("price>200").build();
+		Specification<Product> specification = new SpecificationsBuilder<Product>().withSearch("price>200").build();
 
-		assertEquals(asList(mouse, monitor, camera),
-				productRepository.findAll(specification));
+		assertEquals(asList(mouse, monitor, camera), productRepository.findAll(specification));
 	}
 
 	@Test
 	public void should_return_product_when_find_by_price_less_then() {
-		Specification<Product> specification = new SpecificationsBuilder<Product>()
-				.withSearch("price<100").build();
+		Specification<Product> specification = new SpecificationsBuilder<Product>().withSearch("price<100").build();
 
 		assertEquals(singletonList(keyboard), productRepository.findAll(specification));
 	}
@@ -191,87 +170,72 @@ class SpecificationBuilderTest {
 
 	@Test
 	public void should_return_product_when_find_in_depth_by_updated_at_less_then() {
-		Specification<Product> specification = new SpecificationsBuilder<Product>()
-				.withSearch("updatedAt<2020-04-16").build();
-		assertEquals(asList(keyboard, mouse, monitor),
-				productRepository.findAll(specification));
+		Specification<Product> specification = new SpecificationsBuilder<Product>().withSearch("updatedAt<2020-04-16")
+				.build();
+		assertEquals(asList(keyboard, mouse, monitor), productRepository.findAll(specification));
 	}
 
 	@Test
 	public void should_return_product_when_find_by_created_at_equality() {
-		Specification<Product> specification = new SpecificationsBuilder<Product>()
-				.withSearch("createdAt:2020-04-15").build();
+		Specification<Product> specification = new SpecificationsBuilder<Product>().withSearch("createdAt:2020-04-15")
+				.build();
 		assertEquals(singletonList(keyboard), productRepository.findAll(specification));
 	}
 
 	@Test
 	public void should_return_product_when_find_by_created_at_greater_then() {
-		Specification<Product> specification = new SpecificationsBuilder<Product>()
-				.withSearch("createdAt>2020-04-16").build();
-		assertEquals(asList(mouse, monitor, camera),
-				productRepository.findAll(specification));
+		Specification<Product> specification = new SpecificationsBuilder<Product>().withSearch("createdAt>2020-04-16")
+				.build();
+		assertEquals(asList(mouse, monitor, camera), productRepository.findAll(specification));
 	}
 
 	@Test
 	public void should_return_product_when_find_by_created_at_not_equal() {
-		Specification<Product> specification = new SpecificationsBuilder<Product>()
-				.withSearch("createdAt!2020-04-15").build();
-		assertEquals(asList(mouse, monitor, camera),
-				productRepository.findAll(specification));
+		Specification<Product> specification = new SpecificationsBuilder<Product>().withSearch("createdAt!2020-04-15")
+				.build();
+		assertEquals(asList(mouse, monitor, camera), productRepository.findAll(specification));
 	}
 
 	@Test
 	public void should_return_product_when_find_by_visible_equal_true() {
-		Specification<Product> specification = new SpecificationsBuilder<Product>()
-				.withSearch("visible:true").build();
-		assertEquals(asList(keyboard, mouse, monitor),
-				productRepository.findAll(specification));
+		Specification<Product> specification = new SpecificationsBuilder<Product>().withSearch("visible:true").build();
+		assertEquals(asList(keyboard, mouse, monitor), productRepository.findAll(specification));
 	}
 
 	@Test
 	public void should_return_product_when_find_by_visible_equal_false() {
-		Specification<Product> specification = new SpecificationsBuilder<Product>()
-				.withSearch("visible:false").build();
+		Specification<Product> specification = new SpecificationsBuilder<Product>().withSearch("visible:false").build();
 		assertEquals(singletonList(camera), productRepository.findAll(specification));
 	}
 
 	@Test
 	public void should_return_product_when_find_by_visible_not_equal_true() {
-		Specification<Product> specification = new SpecificationsBuilder<Product>()
-				.withSearch("visible!true").build();
+		Specification<Product> specification = new SpecificationsBuilder<Product>().withSearch("visible!true").build();
 		assertEquals(singletonList(camera), productRepository.findAll(specification));
 	}
 
 	@Test
 	public void should_return_product_when_find_by_visible_not_equal_false() {
-		Specification<Product> specification = new SpecificationsBuilder<Product>()
-				.withSearch("visible!false").build();
-		assertEquals(asList(keyboard, mouse, monitor),
-				productRepository.findAll(specification));
+		Specification<Product> specification = new SpecificationsBuilder<Product>().withSearch("visible!false").build();
+		assertEquals(asList(keyboard, mouse, monitor), productRepository.findAll(specification));
 	}
 
 	@Test
 	public void should_find_by_enum() {
-		Specification<Category> specification = new SpecificationsBuilder<Category>()
-				.withSearch("type:TYPE").build();
-		assertEquals(singletonList(electronics),
-				categoryRepository.findAll(specification));
+		Specification<Category> specification = new SpecificationsBuilder<Category>().withSearch("type:TYPE").build();
+		assertEquals(singletonList(electronics), categoryRepository.findAll(specification));
 	}
 
 	@Test
 	public void should_find_by_enum_with_unrecognized_value() {
-		Specification<Category> specification = new SpecificationsBuilder<Category>()
-				.withSearch("type:FOO").build();
-		assertThrows(BadRequestException.class,
-				() -> categoryRepository.findAll(specification));
+		Specification<Category> specification = new SpecificationsBuilder<Category>().withSearch("type:FOO").build();
+		assertThrows(BadRequestException.class, () -> categoryRepository.findAll(specification));
 	}
 
 	@Test
 	public void should_find_by_enum_with_invalid_operation() {
-		Specification<Category> specification = new SpecificationsBuilder<Category>()
-				.withSearch("type>FOO").build();
-		assertThrows(BadRequestException.class,
-				() -> categoryRepository.findAll(specification));
+		Specification<Category> specification = new SpecificationsBuilder<Category>().withSearch("type>FOO").build();
+		assertThrows(BadRequestException.class, () -> categoryRepository.findAll(specification));
 	}
 
 	@Test
@@ -285,8 +249,7 @@ class SpecificationBuilderTest {
 	public void should_return_product_when_find_by_supplier_government_not_equality() {
 		Specification<Product> specification = new SpecificationsBuilder<Product>()
 				.withSearch("suppliers.governmentId!32752846000174").build();
-		assertNotEquals(singletonList(keyboard),
-				productRepository.findAll(specification));
+		assertNotEquals(singletonList(keyboard), productRepository.findAll(specification));
 	}
 
 	@Test

@@ -18,14 +18,10 @@ public class SearchParameterArgumentResolver implements HandlerMethodArgumentRes
 	}
 
 	@Override
-	public Object resolveArgument(MethodParameter methodParameter,
-			ModelAndViewContainer modelAndViewContainer,
-			NativeWebRequest nativeWebRequest,
-			WebDataBinderFactory webDataBinderFactory) {
-		SearchParameter parameterAnnotation = methodParameter
-				.getParameterAnnotation(SearchParameter.class);
-		return buildSpecification(
-				nativeWebRequest.getParameter(parameterAnnotation.value()));
+	public Object resolveArgument(MethodParameter methodParameter, ModelAndViewContainer modelAndViewContainer,
+			NativeWebRequest nativeWebRequest, WebDataBinderFactory webDataBinderFactory) {
+		SearchParameter parameterAnnotation = methodParameter.getParameterAnnotation(SearchParameter.class);
+		return buildSpecification(nativeWebRequest.getParameter(parameterAnnotation.value()));
 	}
 
 	private <T> Specification<T> buildSpecification(String search) {

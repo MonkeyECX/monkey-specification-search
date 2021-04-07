@@ -17,24 +17,23 @@ public class MonkeyRuntimeException extends RuntimeException {
 	public MonkeyRuntimeException() {
 	}
 
-	public MonkeyRuntimeException(MessageType messageType, List<String> notifications,
-			Integer errorCode) {
+	public MonkeyRuntimeException(MessageType messageType, List<String> notifications, Integer errorCode) {
 		super(new Throwable(notifications.toString()));
 		this.messageType = messageType;
 		this.notifications = notifications;
 		this.errorCode = errorCode;
 	}
 
-	public MonkeyRuntimeException(MessageType messageType, List<String> notifications,
-			Integer errorCode, boolean enableSuppression) {
+	public MonkeyRuntimeException(MessageType messageType, List<String> notifications, Integer errorCode,
+			boolean enableSuppression) {
 		super(notifications.toString(), null, enableSuppression, false);
 		this.messageType = messageType;
 		this.notifications = notifications;
 		this.errorCode = errorCode;
 	}
 
-	public MonkeyRuntimeException(MessageType messageType, List<String> notifications,
-			Throwable cause, Integer errorCode) {
+	public MonkeyRuntimeException(MessageType messageType, List<String> notifications, Throwable cause,
+			Integer errorCode) {
 		super(cause);
 		this.messageType = messageType;
 		this.notifications = notifications;

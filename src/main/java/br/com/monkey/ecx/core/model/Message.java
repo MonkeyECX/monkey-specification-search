@@ -23,8 +23,7 @@ public class Message {
 		this.description = description;
 	}
 
-	public Message(final MessageType type, final String description,
-			final List<String> notifications) {
+	public Message(final MessageType type, final String description, final List<String> notifications) {
 		super();
 		this.type = type;
 		this.description = description;

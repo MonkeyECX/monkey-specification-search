@@ -19,16 +19,14 @@ import static java.util.Objects.nonNull;
 @AllArgsConstructor
 public class SpecificationImpl<T> implements Specification<T> {
 
-	private static final Pattern DATE = Pattern
-			.compile("[0-9]{4}(/|-)[0-9]{1,2}(/|-)[0-9]{1,2}");
+	private static final Pattern DATE = Pattern.compile("[0-9]{4}(/|-)[0-9]{1,2}(/|-)[0-9]{1,2}");
 
 	private static final Pattern BOOLEAN = Pattern.compile("true|false");
 
 	private final SearchCriteria criteria;
 
 	@Override
-	public Predicate toPredicate(Root<T> root, CriteriaQuery<?> criteriaQuery,
-			CriteriaBuilder criteriaBuilder) {
+	public Predicate toPredicate(Root<T> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
 
 		checkFieldInDepth(root);
 
@@ -37,70 +35,59 @@ public class SpecificationImpl<T> implements Specification<T> {
 		String criteriaKey = nestedKey[nestedKey.length - 1];
 
 		if (!isList(nestedRoot) && nestedRoot.get(criteriaKey).getJavaType().isEnum()) {
-			Enum<?>[] enumConstants = (Enum<?>[]) nestedRoot.get(criteriaKey)
-					.getJavaType().getEnumConstants();
-			Enum<?> value = stream(enumConstants)
-					.filter(e -> e.name().equals(criteria.getValue())).findFirst()
+			Enum<?>[] enumConstants = (Enum<?>[]) nestedRoot.get(criteriaKey).getJavaType().getEnumConstants();
+			Enum<?> value = stream(enumConstants).filter(e -> e.name().equals(criteria.getValue())).findFirst()
 					.orElseThrow(() -> new BadRequestException("enum.value.not.found"));
 			criteria.addEnumValue(value);
 		}
 
 		if (criteria.getOperation().equals(SearchOperation.EQUAL)) {
 			if (isDate()) {
-				Expression<String> dateStringExpr = criteriaBuilder.function("date",
-						String.class, nestedRoot.get(criteriaKey));
-				return criteriaBuilder.equal(criteriaBuilder.lower(dateStringExpr),
-						formatDate(criteria.getValue()));
+				Expression<String> dateStringExpr = criteriaBuilder.function("date", String.class,
+						nestedRoot.get(criteriaKey));
+				return criteriaBuilder.equal(criteriaBuilder.lower(dateStringExpr), formatDate(criteria.getValue()));
 			}
 			else if (nonNull(criteria.getEnumValue())) {
-				return criteriaBuilder.equal(nestedRoot.get(criteriaKey),
-						criteria.getEnumValue());
+				return criteriaBuilder.equal(nestedRoot.get(criteriaKey), criteria.getEnumValue());
 			}
 			else if (isBoolean()) {
-				return criteriaBuilder.equal(nestedRoot.get(criteriaKey),
-						Boolean.valueOf(criteria.getValue()));
+				return criteriaBuilder.equal(nestedRoot.get(criteriaKey), Boolean.valueOf(criteria.getValue()));
 			}
 			else if (isList(nestedRoot)) {
 				criteriaQuery.distinct(true);
-				return criteriaBuilder.equal(root
-						.join(((PluralAttributePath) nestedRoot).getAttribute().getName())
-						.get(criteriaKey), criteria.getValue());
+				return criteriaBuilder.equal(
+						root.join(((PluralAttributePath) nestedRoot).getAttribute().getName()).get(criteriaKey),
+						criteria.getValue());
 			}
 			else {
-				return criteriaBuilder.equal(nestedRoot.get(criteriaKey),
-						criteria.getValue());
+				return criteriaBuilder.equal(nestedRoot.get(criteriaKey), criteria.getValue());
 			}
 		}
 		else if (criteria.getOperation().equals(SearchOperation.NOT)) {
 			if (isDate()) {
-				Expression<String> dateStringExpr = criteriaBuilder.function("date",
-						String.class, nestedRoot.get(criteriaKey));
-				return criteriaBuilder.notEqual(criteriaBuilder.lower(dateStringExpr),
-						formatDate(criteria.getValue()));
+				Expression<String> dateStringExpr = criteriaBuilder.function("date", String.class,
+						nestedRoot.get(criteriaKey));
+				return criteriaBuilder.notEqual(criteriaBuilder.lower(dateStringExpr), formatDate(criteria.getValue()));
 			}
 			else if (nonNull(criteria.getEnumValue())) {
-				return criteriaBuilder.notEqual(nestedRoot.get(criteriaKey),
-						criteria.getEnumValue());
+				return criteriaBuilder.notEqual(nestedRoot.get(criteriaKey), criteria.getEnumValue());
 			}
 			else if (isBoolean()) {
-				return criteriaBuilder.notEqual(nestedRoot.get(criteriaKey),
-						Boolean.valueOf(criteria.getValue()));
+				return criteriaBuilder.notEqual(nestedRoot.get(criteriaKey), Boolean.valueOf(criteria.getValue()));
 			}
 			else if (isList(nestedRoot)) {
 				criteriaQuery.distinct(true);
-				return criteriaBuilder.notEqual(root
-						.join(((PluralAttributePath) nestedRoot).getAttribute().getName())
-						.get(criteriaKey), criteria.getValue());
+				return criteriaBuilder.notEqual(
+						root.join(((PluralAttributePath) nestedRoot).getAttribute().getName()).get(criteriaKey),
+						criteria.getValue());
 			}
 			else {
-				return criteriaBuilder.notEqual(nestedRoot.get(criteriaKey),
-						criteria.getValue());
+				return criteriaBuilder.notEqual(nestedRoot.get(criteriaKey), criteria.getValue());
 			}
 		}
 		else if (criteria.getOperation().equals(SearchOperation.GREATER_THAN_EQUAL)) {
 			if (isDate()) {
-				return criteriaBuilder.greaterThanOrEqualTo(
-						nestedRoot.get(criteriaKey).as(Date.class),
+				return criteriaBuilder.greaterThanOrEqualTo(nestedRoot.get(criteriaKey).as(Date.class),
 						getStartOfDay(formatDate(criteria.getValue())).orElseThrow());
 			}
 			else if (nonNull(criteria.getEnumValue())) {
@@ -108,9 +95,9 @@ public class SpecificationImpl<T> implements Specification<T> {
 			}
 			else if (isList(nestedRoot)) {
 				criteriaQuery.distinct(true);
-				return criteriaBuilder.greaterThanOrEqualTo(root
-						.join(((PluralAttributePath) nestedRoot).getAttribute().getName())
-						.get(criteriaKey), criteria.getValue());
+				return criteriaBuilder.greaterThanOrEqualTo(
+						root.join(((PluralAttributePath) nestedRoot).getAttribute().getName()).get(criteriaKey),
+						criteria.getValue());
 			}
 			else {
 				return criteriaBuilder.greaterThanOrEqualTo(nestedRoot.get(criteriaKey),
@@ -119,8 +106,7 @@ public class SpecificationImpl<T> implements Specification<T> {
 		}
 		else if (criteria.getOperation().equals(SearchOperation.LESS_THAN_EQUAL)) {
 			if (isDate()) {
-				return criteriaBuilder.lessThanOrEqualTo(
-						nestedRoot.get(criteriaKey).as(Date.class),
+				return criteriaBuilder.lessThanOrEqualTo(nestedRoot.get(criteriaKey).as(Date.class),
 						getEndOfDay(formatDate(criteria.getValue())).orElseThrow());
 			}
 			else if (nonNull(criteria.getEnumValue())) {
@@ -128,9 +114,9 @@ public class SpecificationImpl<T> implements Specification<T> {
 			}
 			else if (isList(nestedRoot)) {
 				criteriaQuery.distinct(true);
-				return criteriaBuilder.lessThanOrEqualTo(root
-						.join(((PluralAttributePath) nestedRoot).getAttribute().getName())
-						.get(criteriaKey), criteria.getValue());
+				return criteriaBuilder.lessThanOrEqualTo(
+						root.join(((PluralAttributePath) nestedRoot).getAttribute().getName()).get(criteriaKey),
+						criteria.getValue());
 			}
 			else {
 				return criteriaBuilder.lessThanOrEqualTo(nestedRoot.get(criteriaKey),
@@ -143,13 +129,12 @@ public class SpecificationImpl<T> implements Specification<T> {
 			}
 			else if (isList(nestedRoot)) {
 				criteriaQuery.distinct(true);
-				return criteriaBuilder.like(root
-						.join(((PluralAttributePath) nestedRoot).getAttribute().getName())
-						.get(criteriaKey), criteria.getValue() + "%");
+				return criteriaBuilder.like(
+						root.join(((PluralAttributePath) nestedRoot).getAttribute().getName()).get(criteriaKey),
+						criteria.getValue() + "%");
 			}
 			else {
-				return criteriaBuilder.like(nestedRoot.get(criteriaKey),
-						criteria.getValue() + "%");
+				return criteriaBuilder.like(nestedRoot.get(criteriaKey), criteria.getValue() + "%");
 			}
 		}
 		else if (criteria.getOperation().equals(SearchOperation.ENDS_WITH)) {
@@ -158,13 +143,12 @@ public class SpecificationImpl<T> implements Specification<T> {
 			}
 			else if (isList(nestedRoot)) {
 				criteriaQuery.distinct(true);
-				return criteriaBuilder.like(root
-						.join(((PluralAttributePath) nestedRoot).getAttribute().getName())
-						.get(criteriaKey), "%" + criteria.getValue());
+				return criteriaBuilder.like(
+						root.join(((PluralAttributePath) nestedRoot).getAttribute().getName()).get(criteriaKey),
+						"%" + criteria.getValue());
 			}
 			else {
-				return criteriaBuilder.like(nestedRoot.get(criteriaKey),
-						"%" + criteria.getValue());
+				return criteriaBuilder.like(nestedRoot.get(criteriaKey), "%" + criteria.getValue());
 			}
 		}
 		else if (criteria.getOperation().equals(SearchOperation.CONTAINS)) {
@@ -174,13 +158,11 @@ public class SpecificationImpl<T> implements Specification<T> {
 			else if (isList(nestedRoot)) {
 				criteriaQuery.distinct(true);
 				return criteriaBuilder.like(
-						root.join(((PluralAttributePath) nestedRoot).getAttribute()
-								.getName()).get(criteriaKey),
+						root.join(((PluralAttributePath) nestedRoot).getAttribute().getName()).get(criteriaKey),
 						"%" + criteria.getValue() + "%");
 			}
 			else {
-				return criteriaBuilder.like(nestedRoot.get(criteriaKey),
-						"%" + criteria.getValue() + "%");
+				return criteriaBuilder.like(nestedRoot.get(criteriaKey), "%" + criteria.getValue() + "%");
 			}
 		}
 		else if (criteria.getOperation().equals(SearchOperation.DOES_NOT_START_WITH)) {
@@ -189,13 +171,12 @@ public class SpecificationImpl<T> implements Specification<T> {
 			}
 			else if (isList(nestedRoot)) {
 				criteriaQuery.distinct(true);
-				return criteriaBuilder.notLike(root
-						.join(((PluralAttributePath) nestedRoot).getAttribute().getName())
-						.get(criteriaKey), criteria.getValue() + "%");
+				return criteriaBuilder.notLike(
+						root.join(((PluralAttributePath) nestedRoot).getAttribute().getName()).get(criteriaKey),
+						criteria.getValue() + "%");
 			}
 			else {
-				return criteriaBuilder.notLike(nestedRoot.get(criteriaKey),
-						criteria.getValue() + "%");
+				return criteriaBuilder.notLike(nestedRoot.get(criteriaKey), criteria.getValue() + "%");
 			}
 		}
 		else if (criteria.getOperation().equals(SearchOperation.DOES_NOT_END_WITH)) {
@@ -204,13 +185,12 @@ public class SpecificationImpl<T> implements Specification<T> {
 			}
 			else if (isList(nestedRoot)) {
 				criteriaQuery.distinct(true);
-				return criteriaBuilder.notLike(root
-						.join(((PluralAttributePath) nestedRoot).getAttribute().getName())
-						.get(criteriaKey), "%" + criteria.getValue());
+				return criteriaBuilder.notLike(
+						root.join(((PluralAttributePath) nestedRoot).getAttribute().getName()).get(criteriaKey),
+						"%" + criteria.getValue());
 			}
 			else {
-				return criteriaBuilder.notLike(nestedRoot.get(criteriaKey),
-						"%" + criteria.getValue());
+				return criteriaBuilder.notLike(nestedRoot.get(criteriaKey), "%" + criteria.getValue());
 			}
 		}
 		else if (criteria.getOperation().equals(SearchOperation.DOES_NOT_CONTAIN)) {
@@ -220,13 +200,11 @@ public class SpecificationImpl<T> implements Specification<T> {
 			else if (isList(nestedRoot)) {
 				criteriaQuery.distinct(true);
 				return criteriaBuilder.notLike(
-						root.join(((PluralAttributePath) nestedRoot).getAttribute()
-								.getName()).get(criteriaKey),
+						root.join(((PluralAttributePath) nestedRoot).getAttribute().getName()).get(criteriaKey),
 						"%" + criteria.getValue() + "%");
 			}
 			else {
-				return criteriaBuilder.notLike(nestedRoot.get(criteriaKey),
-						"%" + criteria.getValue() + "%");
+				return criteriaBuilder.notLike(nestedRoot.get(criteriaKey), "%" + criteria.getValue() + "%");
 			}
 		}
 		else {
@@ -242,14 +220,12 @@ public class SpecificationImpl<T> implements Specification<T> {
 				return;
 			}
 			stream(root.getJavaType().getDeclaredFields()).forEach(rootField -> {
-				if (nonNull(rootField.getType().getPackageName()) && rootField.getType()
-						.getPackageName().contains(root.getJavaType().getPackageName())) {
+				if (nonNull(rootField.getType().getPackageName())
+						&& rootField.getType().getPackageName().contains(root.getJavaType().getPackageName())) {
 					stream(rootField.getType().getDeclaredFields())
-							.filter(depthField -> depthField.getName()
-									.equalsIgnoreCase(criteria.getKey()))
-							.findFirst().ifPresent(field2 -> {
-								String concat = rootField.getName().concat(".")
-										.concat(field2.getName());
+							.filter(depthField -> depthField.getName().equalsIgnoreCase(criteria.getKey())).findFirst()
+							.ifPresent(field2 -> {
+								String concat = rootField.getName().concat(".").concat(field2.getName());
 								criteria.changeKey(concat);
 							});
 				}
@@ -276,8 +252,7 @@ public class SpecificationImpl<T> implements Specification<T> {
 	}
 
 	public boolean isList(Path nestedRoot) {
-		return nestedRoot.getJavaType().getPackageName()
-				.equals(List.class.getPackageName());
+		return nestedRoot.getJavaType().getPackageName().equals(List.class.getPackageName());
 	}
 
 }

@@ -45,8 +45,7 @@ public class DateUtils {
 		if (isNull(date)) {
 			return Optional.empty();
 		}
-		return Optional.of(
-				LocalDate.from(date.toInstant().atZone(systemDefaultZone().getZone())));
+		return Optional.of(LocalDate.from(date.toInstant().atZone(systemDefaultZone().getZone())));
 	}
 
 	public static Instant getEndOfDay(LocalDateTime date) {
@@ -70,8 +69,7 @@ public class DateUtils {
 			return simpleDateFormat.parse(date);
 		}
 		catch (ParseException e) {
-			throw new IllegalStateException("Error on parse date " + date
-					+ "the correct format is " + "yyyy-MM-dd");
+			throw new IllegalStateException("Error on parse date " + date + "the correct format is " + "yyyy-MM-dd");
 		}
 	}
 
@@ -80,8 +78,7 @@ public class DateUtils {
 	}
 
 	private static LocalDateTime dateToLocalDateTime(Date date) {
-		return LocalDateTime.ofInstant(Instant.ofEpochMilli(date.getTime()),
-				ZoneId.systemDefault());
+		return LocalDateTime.ofInstant(Instant.ofEpochMilli(date.getTime()), ZoneId.systemDefault());
 	}
 
 }
