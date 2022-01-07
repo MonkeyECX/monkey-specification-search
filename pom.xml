@@ -22,9 +22,8 @@
         <guava.version>30.0-jre</guava.version>
         <antlr4-runtime.version>4.7.2</antlr4-runtime.version>
 
-        <h2.version>1.4.200</h2.version>
-
         <spring-javaformat.version>0.0.25</spring-javaformat.version>
+        <testcontainers.mysql.version>1.16.0</testcontainers.mysql.version>
     </properties>
 
     <dependencies>
@@ -57,9 +56,14 @@
 
         <!-- TEST DEPENDENCIES -->
         <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <version>${h2.version}</version>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>mysql</artifactId>
+            <version>${testcontainers.mysql.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
