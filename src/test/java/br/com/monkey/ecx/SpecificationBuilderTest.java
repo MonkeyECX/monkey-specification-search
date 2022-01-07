@@ -10,6 +10,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.math.BigDecimal;
@@ -18,11 +19,17 @@ import java.time.Instant;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace.NONE;
 
 @DataJpaTest
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = { SpringSpecificationSearchApplication.class })
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@AutoConfigureTestDatabase(replace = NONE)
+@TestPropertySource(properties = { "spring.jpa.hibernate.ddl-auto=create-drop", "spring.flyway.enabled=false",
+		"monkey.flyway.enabled=false", "internationalization.country=BR", "internationalization.language=pt-BR",
+		"internationalization.timezone=GMT-3",
+		"spring.datasource.driver-class-name=org.testcontainers.jdbc.ContainerDatabaseDriver",
+		"spring.datasource.url=jdbc:tc:mysql:5.7.22:///monkey_test" })
 class SpecificationBuilderTest {
 
 	@Autowired
