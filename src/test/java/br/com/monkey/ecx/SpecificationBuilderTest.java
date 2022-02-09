@@ -27,7 +27,8 @@ import static org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTest
 @AutoConfigureTestDatabase(replace = NONE)
 @TestPropertySource(properties = { "spring.jpa.hibernate.ddl-auto=create-drop", "spring.flyway.enabled=false",
 		"monkey.flyway.enabled=false", "internationalization.country=BR", "internationalization.language=pt-BR",
-		"internationalization.timezone=GMT-3",
+		"internationalization.timezone=GMT-3", "spring.datasource.hikari.minimum-idle=1",
+		"spring.datasource.hikari.initialization-fail-timeout=0", "spring.datasource.hikari.maximum-pool-size=1",
 		"spring.datasource.driver-class-name=org.testcontainers.jdbc.ContainerDatabaseDriver",
 		"spring.datasource.url=jdbc:tc:mysql:5.7.22:///monkey_test" })
 class SpecificationBuilderTest {
