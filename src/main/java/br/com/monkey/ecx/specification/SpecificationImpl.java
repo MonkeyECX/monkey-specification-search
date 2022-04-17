@@ -2,6 +2,7 @@ package br.com.monkey.ecx.specification;
 
 import br.com.monkey.ecx.core.exception.BadRequestException;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.hibernate.query.criteria.internal.path.PluralAttributePath;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -23,6 +24,7 @@ public class SpecificationImpl<T> implements Specification<T> {
 
 	private static final Pattern BOOLEAN = Pattern.compile("true|false");
 
+	@Getter
 	private final SearchCriteria criteria;
 
 	@Override
