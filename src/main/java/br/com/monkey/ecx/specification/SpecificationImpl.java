@@ -3,6 +3,7 @@ package br.com.monkey.ecx.specification;
 import br.com.monkey.ecx.core.exception.BadRequestException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.query.criteria.internal.path.PluralAttributePath;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -16,8 +17,10 @@ import java.util.regex.Pattern;
 import static br.com.monkey.ecx.core.DateUtils.*;
 import static java.util.Arrays.stream;
 import static java.util.Objects.nonNull;
+import static lombok.AccessLevel.PRIVATE;
 
 @AllArgsConstructor
+@NoArgsConstructor(access = PRIVATE)
 public class SpecificationImpl<T> implements Specification<T> {
 
 	private static final Pattern DATE = Pattern.compile("[0-9]{4}(/|-)[0-9]{1,2}(/|-)[0-9]{1,2}");
@@ -25,7 +28,7 @@ public class SpecificationImpl<T> implements Specification<T> {
 	private static final Pattern BOOLEAN = Pattern.compile("true|false");
 
 	@Getter
-	private final SearchCriteria criteria;
+	private SearchCriteria criteria;
 
 	@Override
 	public Predicate toPredicate(Root<T> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {

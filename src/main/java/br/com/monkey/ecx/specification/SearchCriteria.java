@@ -1,10 +1,14 @@
 package br.com.monkey.ecx.specification;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
+import static lombok.AccessLevel.PRIVATE;
+
 @Getter
+@NoArgsConstructor(access = PRIVATE)
 public class SearchCriteria implements Serializable {
 
 	private String key;
