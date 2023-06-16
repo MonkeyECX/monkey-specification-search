@@ -19,7 +19,7 @@
     <properties>
         <java.version>11</java.version>
 
-        <guava.version>30.0-jre</guava.version>
+        <guava.version>32.0.0-jre</guava.version>
         <antlr4-runtime.version>4.7.2</antlr4-runtime.version>
 
         <spring-javaformat.version>0.0.25</spring-javaformat.version>
