@@ -8,7 +8,7 @@ This project was created to help everyone to create a searchable Rest API :)
 Add a search parameter on your URL like this:
 
 ```javascript
-?search=car.field:foo AND car.field2!bar OR car.field3:200
+?search=color:white AND car.field:foo AND car.field2!bar OR car.field3:200
 ```
 
 #### Aggregators: 
