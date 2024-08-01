@@ -14,16 +14,16 @@ public enum SearchOperation {
 
 	public static SearchOperation getSimpleOperation(final char input) {
 		switch (input) {
-		case ':':
-			return EQUAL;
-		case '!':
-			return NOT;
-		case '>':
-			return GREATER_THAN_EQUAL;
-		case '<':
-			return LESS_THAN_EQUAL;
-		default:
-			return null;
+			case ':':
+				return EQUAL;
+			case '!':
+				return NOT;
+			case '>':
+				return GREATER_THAN_EQUAL;
+			case '<':
+				return LESS_THAN_EQUAL;
+			default:
+				return null;
 		}
 	}
 

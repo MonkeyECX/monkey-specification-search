@@ -2,8 +2,8 @@ package br.com.monkey.ecx;
 
 import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import java.time.Instant;
 
 import static lombok.AccessLevel.PRIVATE;
