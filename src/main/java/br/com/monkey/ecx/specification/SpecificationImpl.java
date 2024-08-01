@@ -15,7 +15,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import static br.com.monkey.ecx.core.DateUtils.*;
+import static br.com.monkey.ecx.core.MonkeySpecificationSearchDateUtils.*;
 import static java.util.Arrays.stream;
 import static java.util.Objects.nonNull;
 import static lombok.AccessLevel.PRIVATE;

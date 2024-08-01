@@ -11,7 +11,7 @@ import static java.time.format.DateTimeFormatter.ofPattern;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
-public class DateUtils {
+public class MonkeySpecificationSearchDateUtils {
 
 	private static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
