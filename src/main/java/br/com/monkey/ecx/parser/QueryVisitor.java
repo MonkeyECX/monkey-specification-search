@@ -2,6 +2,8 @@ package br.com.monkey.ecx.parser;
 
 import br.com.monkey.ecx.QueryBaseVisitor;
 import br.com.monkey.ecx.QueryParser;
+import br.com.monkey.ecx.configuration.CustomSpecificationSearch;
+import br.com.monkey.ecx.core.exception.BadRequestException;
 import br.com.monkey.ecx.specification.SearchCriteria;
 import br.com.monkey.ecx.specification.SearchOperation;
 import br.com.monkey.ecx.specification.SpecificationImpl;
@@ -10,6 +12,7 @@ import org.springframework.data.jpa.domain.Specification;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static br.com.monkey.ecx.configuration.CustomSpecificationSearch.CUSTOM_PREDICATE;
 import static java.util.Objects.nonNull;
 
 class QueryVisitor<T> extends QueryBaseVisitor<Specification<T>> {
@@ -53,6 +56,14 @@ class QueryVisitor<T> extends QueryBaseVisitor<Specification<T>> {
 		String key = ctx.key().getText();
 		String op = ctx.op().getText();
 		String value = ctx.value().getText();
+
+		if (key.startsWith(CUSTOM_PREDICATE)) {
+			Specification<T> specification = CustomSpecificationSearch.getInstance().getPredicate(value);
+			if (specification == null) {
+				throw new BadRequestException("Custom predicate: " + value + " not found!");
+			}
+			return specification;
+		}
 
 		if (nonNull(ctx.value().STRING())) {
 			value = value.replace("'", "").replace("\"", "").replace("\\\"", "\"").replace("\\'", "'");
