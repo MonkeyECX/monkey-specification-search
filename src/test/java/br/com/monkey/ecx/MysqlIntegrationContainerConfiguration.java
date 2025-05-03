@@ -10,7 +10,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 public class MysqlIntegrationContainerConfiguration {
 
 	@Container
-	public static final MySQLContainer<?> database = new MySQLContainer<>("mysql:5.7.37").withUsername("root")
+	public static final MySQLContainer<?> database = new MySQLContainer<>("mysql:8.0.32").withUsername("root")
 		.withReuse(true);
 
 	@DynamicPropertySource

@@ -14,6 +14,7 @@ import org.springframework.test.context.TestPropertySource;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.List;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
@@ -134,6 +135,44 @@ class SpecificationBuilderTest extends MysqlIntegrationContainerConfiguration {
 			.build();
 
 		productRepository.saveAll(asList(keyboard, mouse, monitor, camera));
+	}
+
+	@Test
+	public void should_return_products_when_find_by_array_in_depth_by_government_id_and_return_keyboard() {
+		Specification<Product> specification = new SpecificationsBuilder<Product>()
+			.withSearch("suppliers.governmentId IN ['32752846000174']")
+			.build();
+		assertEquals(List.of(keyboard), productRepository.findAll(specification));
+	}
+
+	@Test
+	public void should_return_products_when_find_by_array_in_depth_by_government_id_and_return_mouse() {
+		Specification<Product> specification = new SpecificationsBuilder<Product>()
+			.withSearch("suppliers.governmentId IN ['20544215000180']")
+			.build();
+		assertEquals(List.of(monitor), productRepository.findAll(specification));
+	}
+
+	@Test
+	public void should_return_products_when_find_by_array_in_depth_by_government_id() {
+		Specification<Product> specification = new SpecificationsBuilder<Product>()
+			.withSearch("suppliers.governmentId IN ['20544215000180', '32752846000174']")
+			.build();
+		assertEquals(List.of(keyboard, monitor), productRepository.findAll(specification));
+	}
+
+	@Test
+	public void should_return_products_when_find_by_array_in_depth() {
+		Specification<Product> specification = new SpecificationsBuilder<Product>()
+			.withSearch("suppliers.id IN [1,2,3,4]")
+			.build();
+		assertEquals(List.of(keyboard, monitor), productRepository.findAll(specification));
+	}
+
+	@Test
+	public void should_return_products_when_find_by_array() {
+		Specification<Product> specification = new SpecificationsBuilder<Product>().withSearch("id IN [1,2]").build();
+		assertEquals(List.of(keyboard, mouse), productRepository.findAll(specification));
 	}
 
 	@Test

@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.List;
 
 import static lombok.AccessLevel.PRIVATE;
 
@@ -17,7 +18,15 @@ public class SearchCriteria implements Serializable {
 
 	private String value;
 
+	private List<String> values;
+
 	private Enum enumValue;
+
+	public SearchCriteria(final String key, final SearchOperation operation, final List<String> value) {
+		this.key = key;
+		this.operation = operation;
+		this.values = value;
+	}
 
 	public SearchCriteria(final String key, final String operation, String prefix, final String value, String suffix) {
 		SearchOperation op = SearchOperation.getSimpleOperation(operation.charAt(0));
