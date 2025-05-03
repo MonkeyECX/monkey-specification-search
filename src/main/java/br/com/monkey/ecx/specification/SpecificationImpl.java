@@ -1,6 +1,7 @@
 package br.com.monkey.ecx.specification;
 
 import br.com.monkey.ecx.core.exception.BadRequestException;
+import jakarta.persistence.criteria.*;
 import jakarta.persistence.metamodel.ListAttribute;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -8,14 +9,13 @@ import lombok.NoArgsConstructor;
 import org.hibernate.query.sqm.tree.domain.SqmPluralValuedSimplePath;
 import org.springframework.data.jpa.domain.Specification;
 
-import jakarta.persistence.criteria.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import static br.com.monkey.ecx.core.DateUtils.*;
+import static br.com.monkey.ecx.core.MonkeySpecificationSearchDateUtils.*;
 import static java.util.Arrays.stream;
 import static java.util.Objects.nonNull;
 import static lombok.AccessLevel.PRIVATE;
@@ -48,7 +48,32 @@ public class SpecificationImpl<T> implements Specification<T> {
 			criteria.addEnumValue(value);
 		}
 
-		if (criteria.getOperation().equals(SearchOperation.EQUAL)) {
+		if (criteria.getOperation().equals(SearchOperation.IN_ARRAY)) {
+			if (isList(nestedRoot)) {
+				criteriaQuery.distinct(true);
+				return criteriaBuilder
+					.in(root.join(((SqmPluralValuedSimplePath) nestedRoot).getNavigablePath().getLocalName())
+						.get(criteriaKey))
+					.value(criteria.getValues());
+			}
+			else {
+				return criteriaBuilder.in(nestedRoot.get(criteriaKey)).value(criteria.getValues());
+			}
+		}
+		else if (criteria.getOperation().equals(SearchOperation.NOT_IN_ARRAY)) {
+			if (isList(nestedRoot)) {
+				criteriaQuery.distinct(true);
+				return criteriaBuilder.not(
+						criteriaBuilder
+							.in(root.join(((SqmPluralValuedSimplePath) nestedRoot).getNavigablePath().getLocalName())
+								.get(criteriaKey))
+							.value(criteria.getValues()));
+			}
+			else {
+				return criteriaBuilder.not(criteriaBuilder.in(nestedRoot.get(criteriaKey)).value(criteria.getValues()));
+			}
+		}
+		else if (criteria.getOperation().equals(SearchOperation.EQUAL)) {
 			if (isDate()) {
 				Expression<String> dateStringExpr = criteriaBuilder.function("date", String.class,
 						nestedRoot.get(criteriaKey));

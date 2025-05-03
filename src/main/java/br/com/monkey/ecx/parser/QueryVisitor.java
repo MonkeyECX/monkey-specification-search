@@ -2,14 +2,18 @@ package br.com.monkey.ecx.parser;
 
 import br.com.monkey.ecx.QueryBaseVisitor;
 import br.com.monkey.ecx.QueryParser;
+import br.com.monkey.ecx.configuration.CustomSpecificationSearch;
+import br.com.monkey.ecx.core.exception.BadRequestException;
 import br.com.monkey.ecx.specification.SearchCriteria;
 import br.com.monkey.ecx.specification.SearchOperation;
 import br.com.monkey.ecx.specification.SpecificationImpl;
 import org.springframework.data.jpa.domain.Specification;
 
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static br.com.monkey.ecx.configuration.CustomSpecificationSearch.CUSTOM_PREDICATE;
 import static java.util.Objects.nonNull;
 
 class QueryVisitor<T> extends QueryBaseVisitor<Specification<T>> {
@@ -49,10 +53,18 @@ class QueryVisitor<T> extends QueryBaseVisitor<Specification<T>> {
 	}
 
 	@Override
-	public Specification<T> visitCriteria(QueryParser.CriteriaContext ctx) {
+	public Specification<T> visitOpCriteria(QueryParser.OpCriteriaContext ctx) {
 		String key = ctx.key().getText();
 		String op = ctx.op().getText();
 		String value = ctx.value().getText();
+
+		if (key.startsWith(CUSTOM_PREDICATE)) {
+			Specification<T> specification = CustomSpecificationSearch.getInstance().getPredicate(value);
+			if (specification == null) {
+				throw new BadRequestException("Custom predicate: " + value + " not found!");
+			}
+			return specification;
+		}
 
 		if (nonNull(ctx.value().STRING())) {
 			value = value.replace("'", "").replace("\"", "").replace("\\\"", "\"").replace("\\'", "'");
@@ -66,6 +78,29 @@ class QueryVisitor<T> extends QueryBaseVisitor<Specification<T>> {
 			criteria = new SearchCriteria(key, op, null, matchResult.group(2), null);
 		}
 		return new SpecificationImpl<>(criteria);
+	}
+
+	@Override
+	public Specification<T> visitArrayCriteria(QueryParser.ArrayCriteriaContext ctx) {
+		String key = ctx.key().getText();
+		SearchOperation op = SearchOperation.IN_ARRAY;
+
+		QueryParser.ArrayContext arr = ctx.array();
+		List<QueryParser.ValueContext> arrayValues = arr.value();
+
+		List<String> valueAsList = arrayValues.stream()
+			.map(value -> value.STRING() != null ? clearString(value.getText()) : value.getText())
+			.toList();
+
+		SearchCriteria criteria = new SearchCriteria(key, op, valueAsList);
+		return new SpecificationImpl<>(criteria);
+	}
+
+	private String clearString(String value) {
+		if ((value.startsWith("'") && value.endsWith("'")) || (value.startsWith("\"") && value.endsWith("\""))) {
+			value = value.substring(1, value.length() - 1);
+		}
+		return value.replace("\\\"", "\"").replace("\\'", "'");
 	}
 
 }
