@@ -10,9 +10,9 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
-    <groupId>br.com.monkey.ecx</groupId>
+    <groupId>br.com.monkey.sdk</groupId>
     <artifactId>monkey-specification-search</artifactId>
-    <version>5.0.0</version>
+    <version>6.0.0</version>
     <name>monkey-specification-search</name>
     <description>Spring Specification Search</description>
 
@@ -106,9 +106,9 @@
                     <visitor>true</visitor>
                     <arguments>
                         <argument>-package</argument>
-                        <argument>br.com.monkey.ecx</argument>
+                        <argument>br.com.monkey.sdk</argument>
                     </arguments>
-                    <outputDirectory>${project.build.directory}/generated-sources/antlr4/br/com/monkey/ecx
+                    <outputDirectory>${project.build.directory}/generated-sources/antlr4/br/com/monkey/sdk
                     </outputDirectory>
                 </configuration>
             </plugin>
