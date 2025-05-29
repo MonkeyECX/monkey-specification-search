@@ -1,3 +1,0 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-br.com.monkey.sdk.configuration.SearchBySpecificationAutoConfiguration,\
-br.com.monkey.sdk.configuration.MonkeyJpaRepositoriesAutoConfiguration
