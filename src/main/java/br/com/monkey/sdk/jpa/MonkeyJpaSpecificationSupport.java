@@ -6,6 +6,6 @@ import org.springframework.data.jpa.domain.Specification;
 
 interface MonkeyJpaSpecificationSupport<T> {
 
-	Page<T> findAllGroupBy(Specification<T> spec, Pageable pageable);
+	Page<T> findAllUsingGroupBy(Specification<T> spec, Pageable pageable);
 
 }

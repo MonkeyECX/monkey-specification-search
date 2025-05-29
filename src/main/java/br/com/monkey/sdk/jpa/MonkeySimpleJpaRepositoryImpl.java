@@ -24,7 +24,7 @@ public class MonkeySimpleJpaRepositoryImpl<T, ID extends Serializable> extends S
 	}
 
 	@Override
-	public Page<T> findAllGroupBy(Specification<T> spec, Pageable pageable) {
+	public Page<T> findAllUsingGroupBy(Specification<T> spec, Pageable pageable) {
 		TypedQuery<T> query = getQuery(spec, pageable);
 		return pageable.isUnpaged() ? new PageImpl<>(query.getResultList())
 				: readPageGrouped(query, getDomainClass(), pageable, spec);

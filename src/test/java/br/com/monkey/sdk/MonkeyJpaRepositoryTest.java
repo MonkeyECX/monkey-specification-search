@@ -71,7 +71,7 @@ class MonkeyJpaRepositoryTest extends MysqlIntegrationContainerConfiguration {
 		Page<Invoice> invoicePage = repository.findAll(spec, pageable);
 		assertEquals(expectedTotalRows, invoicePage.getTotalElements());
 
-		Page<Invoice> invoicePageGrouped = repository.findAllGroupBy(spec, pageable);
+		Page<Invoice> invoicePageGrouped = repository.findAllUsingGroupBy(spec, pageable);
 		assertEquals(expectedRowsGrouped, invoicePageGrouped.getTotalElements());
 	}
 
@@ -88,7 +88,7 @@ class MonkeyJpaRepositoryTest extends MysqlIntegrationContainerConfiguration {
 		Page<Invoice> invoicePage = repository.findAll(spec, pageable);
 		assertEquals(expectedTotalRows, invoicePage.getTotalElements());
 
-		Page<Invoice> invoicePageGrouped = repository.findAllGroupBy(spec, pageable);
+		Page<Invoice> invoicePageGrouped = repository.findAllUsingGroupBy(spec, pageable);
 		assertEquals(expectedRowsGrouped, invoicePageGrouped.getTotalElements());
 	}
 
@@ -105,7 +105,7 @@ class MonkeyJpaRepositoryTest extends MysqlIntegrationContainerConfiguration {
 		Page<Invoice> invoicePage = repository.findAll(spec, pageable);
 		assertEquals(expectedTotalRows, invoicePage.getTotalElements());
 
-		Page<Invoice> invoicePageGrouped = repository.findAllGroupBy(spec, pageable);
+		Page<Invoice> invoicePageGrouped = repository.findAllUsingGroupBy(spec, pageable);
 		assertEquals(expectedRowsGrouped, invoicePageGrouped.getTotalElements());
 	}
 
@@ -122,7 +122,7 @@ class MonkeyJpaRepositoryTest extends MysqlIntegrationContainerConfiguration {
 		Page<Invoice> invoicePage = repository.findAll(spec, pageable);
 		assertEquals(expectedTotalRows, invoicePage.getTotalElements());
 
-		Page<Invoice> invoicePageGrouped = repository.findAllGroupBy(spec, pageable);
+		Page<Invoice> invoicePageGrouped = repository.findAllUsingGroupBy(spec, pageable);
 		assertEquals(expectedRowsGrouped, invoicePageGrouped.getTotalElements());
 	}
 
