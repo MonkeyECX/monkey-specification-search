@@ -1,0 +1,2 @@
+br.com.monkey.sdk.configuration.SearchBySpecificationAutoConfiguration
+br.com.monkey.sdk.configuration.MonkeyJpaRepositoriesAutoConfiguration
