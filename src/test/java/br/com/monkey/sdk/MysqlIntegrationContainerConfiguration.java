@@ -1,12 +1,17 @@
 package br.com.monkey.sdk;
 
+import br.com.monkey.sdk.configuration.MonkeyJpaRepositoriesAutoConfiguration;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.test.context.jdbc.Sql;
 import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 @Testcontainers
+@Sql(statements = "SET SESSION sql_mode=''")
+@Import({ MonkeyJpaRepositoriesAutoConfiguration.class })
 public class MysqlIntegrationContainerConfiguration {
 
 	@Container
