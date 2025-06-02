@@ -6,7 +6,6 @@ import org.springframework.data.repository.NoRepositoryBean;
 import java.io.Serializable;
 
 @NoRepositoryBean
-public interface MonkeyJpaRepository<T, ID extends Serializable>
-		extends JpaRepository<T, ID>, MonkeyJpaSpecificationSupport<T> {
+public interface MonkeyJpaRepository<T, ID extends Serializable> extends JpaRepository<T, ID> {
 
 }

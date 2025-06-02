@@ -2,7 +2,9 @@ package br.com.monkey.sdk.jpa;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
-import lombok.val;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -15,19 +17,38 @@ import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 
 import java.io.Serializable;
+import java.util.Optional;
 
-public class MonkeySimpleJpaRepositoryImpl<T, ID extends Serializable> extends SimpleJpaRepository<T, ID>
-		implements MonkeyJpaSpecificationSupport<T> {
+public class MonkeySimpleJpaRepositoryImpl<T, ID extends Serializable> extends SimpleJpaRepository<T, ID> {
+
+	private final EntityManager entityManager;
 
 	public MonkeySimpleJpaRepositoryImpl(JpaEntityInformation<T, ?> entityInformation, EntityManager entityManager) {
 		super(entityInformation, entityManager);
+		this.entityManager = entityManager;
 	}
 
 	@Override
-	public Page<T> findAllUsingGroupBy(Specification<T> spec, Pageable pageable) {
+	public Page<T> findAll(@Nullable Specification<T> spec, Pageable pageable) {
+		if (hasNoGroupBy(spec)) {
+			return super.findAll(spec, pageable);
+		}
+
 		TypedQuery<T> query = getQuery(spec, pageable);
 		return pageable.isUnpaged() ? new PageImpl<>(query.getResultList())
 				: readPageGrouped(query, getDomainClass(), pageable, spec);
+	}
+
+	private boolean hasNoGroupBy(Specification<T> spec) {
+		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+		CriteriaQuery<T> query = builder.createQuery(getDomainClass());
+		Root<T> root = query.from(getDomainClass());
+
+		if (spec != null) {
+			Optional.ofNullable(spec.toPredicate(root, query, builder)).ifPresent(query::where);
+		}
+
+		return query.getGroupList().isEmpty();
 	}
 
 	protected <S extends T> Page<S> readPageGrouped(TypedQuery<S> query, final Class<S> domainClass, Pageable pageable,
@@ -37,8 +58,7 @@ public class MonkeySimpleJpaRepositoryImpl<T, ID extends Serializable> extends S
 			query.setMaxResults(pageable.getPageSize());
 		}
 
-		val result = query.getResultList();
-		return PageableExecutionUtils.getPage(result, pageable,
+		return PageableExecutionUtils.getPage(query.getResultList(), pageable,
 				() -> executeCountQueryGrouped(getCountQuery(spec, domainClass)));
 	}
 
