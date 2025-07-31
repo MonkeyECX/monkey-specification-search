@@ -163,12 +163,13 @@ public class SpecificationImpl<T> implements Specification<T> {
 			}
 			else if (isList(nestedRoot)) {
 				criteriaQuery.distinct(true);
-				return criteriaBuilder
-					.like(root.join(((SqmPluralValuedSimplePath) nestedRoot).getNavigablePath().getLocalName())
-						.get(criteriaKey), criteria.getValue() + "%");
+				return criteriaBuilder.like(criteriaBuilder
+					.lower(root.join(((SqmPluralValuedSimplePath) nestedRoot).getNavigablePath().getLocalName())
+						.get(criteriaKey)), criteria.getValue().toLowerCase() + "%");
 			}
 			else {
-				return criteriaBuilder.like(nestedRoot.get(criteriaKey), criteria.getValue() + "%");
+				return criteriaBuilder.like(criteriaBuilder.lower(nestedRoot.get(criteriaKey)),
+						criteria.getValue().toLowerCase() + "%");
 			}
 		}
 		else if (criteria.getOperation().equals(SearchOperation.ENDS_WITH)) {
@@ -177,12 +178,13 @@ public class SpecificationImpl<T> implements Specification<T> {
 			}
 			else if (isList(nestedRoot)) {
 				criteriaQuery.distinct(true);
-				return criteriaBuilder
-					.like(root.join(((SqmPluralValuedSimplePath) nestedRoot).getNavigablePath().getLocalName())
-						.get(criteriaKey), "%" + criteria.getValue());
+				return criteriaBuilder.like(criteriaBuilder
+					.lower(root.join(((SqmPluralValuedSimplePath) nestedRoot).getNavigablePath().getLocalName())
+						.get(criteriaKey)), "%" + criteria.getValue().toLowerCase());
 			}
 			else {
-				return criteriaBuilder.like(nestedRoot.get(criteriaKey), "%" + criteria.getValue());
+				return criteriaBuilder.like(criteriaBuilder.lower(nestedRoot.get(criteriaKey)),
+						"%" + criteria.getValue().toLowerCase());
 			}
 		}
 		else if (criteria.getOperation().equals(SearchOperation.CONTAINS)) {
@@ -191,12 +193,13 @@ public class SpecificationImpl<T> implements Specification<T> {
 			}
 			else if (isList(nestedRoot)) {
 				criteriaQuery.distinct(true);
-				return criteriaBuilder
-					.like(root.join(((SqmPluralValuedSimplePath) nestedRoot).getNavigablePath().getLocalName())
-						.get(criteriaKey), "%" + criteria.getValue() + "%");
+				return criteriaBuilder.like(criteriaBuilder
+					.lower(root.join(((SqmPluralValuedSimplePath) nestedRoot).getNavigablePath().getLocalName())
+						.get(criteriaKey)), "%" + criteria.getValue().toLowerCase() + "%");
 			}
 			else {
-				return criteriaBuilder.like(nestedRoot.get(criteriaKey), "%" + criteria.getValue() + "%");
+				return criteriaBuilder.like(criteriaBuilder.lower(nestedRoot.get(criteriaKey)),
+						"%" + criteria.getValue().toLowerCase() + "%");
 			}
 		}
 		else if (criteria.getOperation().equals(SearchOperation.DOES_NOT_START_WITH)) {
@@ -205,12 +208,13 @@ public class SpecificationImpl<T> implements Specification<T> {
 			}
 			else if (isList(nestedRoot)) {
 				criteriaQuery.distinct(true);
-				return criteriaBuilder
-					.notLike(root.join(((SqmPluralValuedSimplePath) nestedRoot).getNavigablePath().getLocalName())
-						.get(criteriaKey), criteria.getValue() + "%");
+				return criteriaBuilder.notLike(criteriaBuilder
+					.lower(root.join(((SqmPluralValuedSimplePath) nestedRoot).getNavigablePath().getLocalName())
+						.get(criteriaKey)), criteria.getValue().toLowerCase() + "%");
 			}
 			else {
-				return criteriaBuilder.notLike(nestedRoot.get(criteriaKey), criteria.getValue() + "%");
+				return criteriaBuilder.notLike(criteriaBuilder.lower(nestedRoot.get(criteriaKey)),
+						criteria.getValue().toLowerCase() + "%");
 			}
 		}
 		else if (criteria.getOperation().equals(SearchOperation.DOES_NOT_END_WITH)) {
@@ -219,12 +223,13 @@ public class SpecificationImpl<T> implements Specification<T> {
 			}
 			else if (isList(nestedRoot)) {
 				criteriaQuery.distinct(true);
-				return criteriaBuilder
-					.notLike(root.join(((SqmPluralValuedSimplePath) nestedRoot).getNavigablePath().getLocalName())
-						.get(criteriaKey), "%" + criteria.getValue());
+				return criteriaBuilder.notLike(criteriaBuilder
+					.lower(root.join(((SqmPluralValuedSimplePath) nestedRoot).getNavigablePath().getLocalName())
+						.get(criteriaKey)), "%" + criteria.getValue().toLowerCase());
 			}
 			else {
-				return criteriaBuilder.notLike(nestedRoot.get(criteriaKey), "%" + criteria.getValue());
+				return criteriaBuilder.notLike(criteriaBuilder.lower(nestedRoot.get(criteriaKey)),
+						"%" + criteria.getValue().toLowerCase());
 			}
 		}
 		else if (criteria.getOperation().equals(SearchOperation.DOES_NOT_CONTAIN)) {
@@ -233,12 +238,13 @@ public class SpecificationImpl<T> implements Specification<T> {
 			}
 			else if (isList(nestedRoot)) {
 				criteriaQuery.distinct(true);
-				return criteriaBuilder
-					.notLike(root.join(((SqmPluralValuedSimplePath) nestedRoot).getNavigablePath().getLocalName())
-						.get(criteriaKey), "%" + criteria.getValue() + "%");
+				return criteriaBuilder.notLike(criteriaBuilder
+					.lower(root.join(((SqmPluralValuedSimplePath) nestedRoot).getNavigablePath().getLocalName())
+						.get(criteriaKey)), "%" + criteria.getValue().toLowerCase() + "%");
 			}
 			else {
-				return criteriaBuilder.notLike(nestedRoot.get(criteriaKey), "%" + criteria.getValue() + "%");
+				return criteriaBuilder.notLike(criteriaBuilder.lower(nestedRoot.get(criteriaKey)),
+						"%" + criteria.getValue().toLowerCase() + "%");
 			}
 		}
 		else {
