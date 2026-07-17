@@ -23,7 +23,7 @@
         <antlr4-runtime.version>4.13.2</antlr4-runtime.version>
 
         <spring-javaformat.version>0.0.43</spring-javaformat.version>
-        <testcontainers.mysql.version>1.21.0</testcontainers.mysql.version>
+        <testcontainers.mysql.version>1.21.4</testcontainers.mysql.version>
     </properties>
 
     <dependencies>
