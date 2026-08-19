@@ -71,10 +71,10 @@ class QueryVisitor<T> extends QueryBaseVisitor<Specification<T>> {
 		Matcher matchResult = REGEX.matcher(value);
 		SearchCriteria criteria;
 		if (matchResult.matches()) {
-			criteria = new SearchCriteria(key, op, matchResult.group(1), matchResult.group(2), matchResult.group(3));
+			criteria = new SearchCriteria(key, op, matchResult.group(2), matchResult.group(3));
 		}
 		else {
-			criteria = new SearchCriteria(key, op, null, matchResult.group(2), null);
+			criteria = new SearchCriteria(key, op, matchResult.group(2), null);
 		}
 		return new SpecificationImpl<>(criteria);
 	}

@@ -151,38 +151,10 @@ class SpecificationBuilderTest extends MysqlIntegrationContainerConfiguration {
 	}
 
 	@Test
-	public void should_return_product_when_find_by_name_ends_with() {
-		Specification<Product> specification = new SpecificationsBuilder<Product>().withSearch("name:*tor").build();
-
-		assertEquals(singletonList(monitor), productRepository.findAll(specification));
-	}
-
-	@Test
-	public void should_return_product_when_find_by_name_contains_with() {
-		Specification<Product> specification = new SpecificationsBuilder<Product>().withSearch("name:*nit*").build();
-
-		assertEquals(asList(monitor, camera), productRepository.findAll(specification));
-	}
-
-	@Test
 	public void should_return_product_when_find_by_name_not_starts_with() {
 		Specification<Product> specification = new SpecificationsBuilder<Product>().withSearch("name!Mo*").build();
 
 		assertEquals(asList(keyboard, camera), productRepository.findAll(specification));
-	}
-
-	@Test
-	public void should_return_product_when_find_by_name_not_ends_with() {
-		Specification<Product> specification = new SpecificationsBuilder<Product>().withSearch("name!*tor").build();
-
-		assertEquals(asList(keyboard, mouse, camera), productRepository.findAll(specification));
-	}
-
-	@Test
-	public void should_return_product_when_find_by_name_not_contains_with() {
-		Specification<Product> specification = new SpecificationsBuilder<Product>().withSearch("name!*nit*").build();
-
-		assertEquals(asList(keyboard, mouse), productRepository.findAll(specification));
 	}
 
 	@Test
@@ -337,43 +309,11 @@ class SpecificationBuilderTest extends MysqlIntegrationContainerConfiguration {
 	}
 
 	@Test
-	public void should_return_product_when_find_by_supplier_by_government_id_ends_with() {
-		Specification<Product> specification = new SpecificationsBuilder<Product>()
-			.withSearch("suppliers.governmentId:*180")
-			.build();
-		assertEquals(singletonList(monitor), productRepository.findAll(specification));
-	}
-
-	@Test
-	public void should_return_product_when_find_by_supplier_by_name_contains_with() {
-		Specification<Product> specification = new SpecificationsBuilder<Product>()
-			.withSearch("suppliers.name:*Keyboards*")
-			.build();
-		assertEquals(singletonList(keyboard), productRepository.findAll(specification));
-	}
-
-	@Test
 	public void should_return_product_when_find_by_supplier_by_name_not_starts_with() {
 		Specification<Product> specification = new SpecificationsBuilder<Product>()
 			.withSearch("suppliers.name!SupplierKeybo*")
 			.build();
 		assertEquals(singletonList(monitor), productRepository.findAll(specification));
-	}
-
-	@Test
-	public void should_return_product_when_find_by_supplier_by_government_id_not_ends_with() {
-		Specification<Product> specification = new SpecificationsBuilder<Product>()
-			.withSearch("suppliers.governmentId!*180")
-			.build();
-		assertEquals(singletonList(keyboard), productRepository.findAll(specification));
-	}
-
-	@Test
-	public void should_return_product_when_find_by_supplier_by_name_not_contains_with() {
-		Specification<Product> specification = new SpecificationsBuilder<Product>()
-			.withSearch("suppliers.name!*Monitors*")
-			.build();
-		assertEquals(singletonList(keyboard), productRepository.findAll(specification));
 	}
 
 }
