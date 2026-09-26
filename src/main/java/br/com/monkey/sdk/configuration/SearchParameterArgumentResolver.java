@@ -1,6 +1,7 @@
 package br.com.monkey.sdk.configuration;
 
 import br.com.monkey.sdk.annotation.SearchParameter;
+import br.com.monkey.sdk.parser.CriteriaParser;
 import br.com.monkey.sdk.specification.SpecificationsBuilder;
 import org.springframework.core.MethodParameter;
 import org.springframework.data.jpa.domain.Specification;
@@ -8,6 +9,8 @@ import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
+
+import java.util.List;
 
 public class SearchParameterArgumentResolver implements HandlerMethodArgumentResolver {
 
@@ -21,14 +24,18 @@ public class SearchParameterArgumentResolver implements HandlerMethodArgumentRes
 	public Object resolveArgument(MethodParameter methodParameter, ModelAndViewContainer modelAndViewContainer,
 			NativeWebRequest nativeWebRequest, WebDataBinderFactory webDataBinderFactory) {
 		SearchParameter parameterAnnotation = methodParameter.getParameterAnnotation(SearchParameter.class);
-		return buildSpecification(nativeWebRequest.getParameter(parameterAnnotation.value()));
+		return buildSpecification(nativeWebRequest.getParameter(parameterAnnotation.value()),
+				parameterAnnotation.required());
 	}
 
-	private <T> Specification<T> buildSpecification(String search) {
+	private <T> Specification<T> buildSpecification(String search, String[] requiredKeys) {
 		if (search == null || search.isEmpty()) {
+			if (requiredKeys.length > 0) {
+				throw CriteriaParser.missingRequiredKeys(List.of(requiredKeys));
+			}
 			return null;
 		}
-		return new SpecificationsBuilder<T>().withSearch(search).build();
+		return new SpecificationsBuilder<T>().withSearch(search, requiredKeys).build();
 	}
 
 }

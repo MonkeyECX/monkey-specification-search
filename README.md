@@ -29,6 +29,31 @@ Add a search parameter on your URL like this:
 ?search=color:white AND car.field:foo AND car.field2!bar OR car.field3:200 OR car.field4 IN ['foo','bar']
 ```
 
+## Required keys
+
+Use `required` to force the search to always contain some keys:
+
+```java
+@GetMapping
+PagedModel<EntityModel<InvoiceEntriesResponse>> findAll(
+        @SearchParameter(required = InvoiceEntries_.EXTERNAL_ID) Specification<InvoiceEntries> search,
+        Pageable pageable) {
+    ...
+}
+```
+
+Any criterion on the key counts, whatever the operator (`:`, `!`, `>`, `<`, `*`, `IN`) or logical operation
+(`AND`, `OR`, parenthesis). When a key is missing — or the `search` parameter is missing or empty — the resolver
+throws a `BadRequestException` (`Search parameter must filter by: <keys>`).
+
+| Search (`required = "externalId"`)                    | Result      |
+|-------------------------------------------------------|-------------|
+| `externalId:1`, `externalId:1 AND seller.id:2`        | ✅           |
+| `externalId:1 OR seller.id:2`, `externalId!1`         | ✅           |
+| `externalId:1*`, `externalId IN ['1', '2']`           | ✅           |
+| `seller.id:2`                                         | ❌ 400       |
+| no `search` parameter                                 | ❌ 400       |
+
 ## CustomSpecificationSearch
 
 With `CustomSpecificationSearch`, you can execute specifications using a request parameter. Follow the steps below to use it:

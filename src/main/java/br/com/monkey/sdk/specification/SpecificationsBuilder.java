@@ -14,6 +14,11 @@ public class SpecificationsBuilder<T> {
 		return this;
 	}
 
+	public SpecificationsBuilder<T> withSearch(String search, String... requiredKeys) {
+		specifications = parser.parse(search, requiredKeys);
+		return this;
+	}
+
 	public Specification<T> build() {
 		return specifications;
 	}
