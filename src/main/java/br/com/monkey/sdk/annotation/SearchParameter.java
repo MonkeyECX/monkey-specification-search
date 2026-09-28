@@ -11,4 +11,10 @@ public @interface SearchParameter {
 
 	String value() default "search";
 
+	/**
+	 * Keys the search must contain, with any operator; otherwise the request fails with a
+	 * {@link br.com.monkey.sdk.core.exception.BadRequestException}.
+	 */
+	String[] required() default {};
+
 }
