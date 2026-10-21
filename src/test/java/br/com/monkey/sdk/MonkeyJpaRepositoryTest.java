@@ -14,7 +14,7 @@ import org.springframework.test.context.TestPropertySource;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace.NONE;
 
 @DataJpaTest
@@ -65,8 +65,8 @@ class MonkeyJpaRepositoryTest extends MysqlIntegrationContainerConfiguration {
 		Specification<Invoice> specNotGrouped = (root, query, criteriaBuilder) -> criteriaBuilder
 			.equal(root.get("invoiceKey"), "not-found");
 
-		assertEquals(expectedRowsGrouped, repository.findAll(specGrouped, pageable).getTotalElements());
-		assertEquals(expectedTotalRows, repository.findAll(specNotGrouped, pageable).getTotalElements());
+		assertThat(repository.findAll(specGrouped, pageable).getTotalElements()).isEqualTo(expectedRowsGrouped);
+		assertThat(repository.findAll(specNotGrouped, pageable).getTotalElements()).isEqualTo(expectedTotalRows);
 	}
 
 	@Test
@@ -82,8 +82,8 @@ class MonkeyJpaRepositoryTest extends MysqlIntegrationContainerConfiguration {
 		Specification<Invoice> specNotGrouped = (root, query, criteriaBuilder) -> criteriaBuilder
 			.equal(root.get("invoiceKey"), "003");
 
-		assertEquals(expectedRowsGrouped, repository.findAll(specGrouped, pageable).getTotalElements());
-		assertEquals(expectedTotalRows, repository.findAll(specNotGrouped, pageable).getTotalElements());
+		assertThat(repository.findAll(specGrouped, pageable).getTotalElements()).isEqualTo(expectedRowsGrouped);
+		assertThat(repository.findAll(specNotGrouped, pageable).getTotalElements()).isEqualTo(expectedTotalRows);
 	}
 
 	@Test
@@ -99,8 +99,8 @@ class MonkeyJpaRepositoryTest extends MysqlIntegrationContainerConfiguration {
 		Specification<Invoice> specNotGrouped = (root, query, criteriaBuilder) -> root.get("invoiceKey")
 			.in("002", "003");
 
-		assertEquals(expectedRowsGrouped, repository.findAll(specGrouped, pageable).getTotalElements());
-		assertEquals(expectedTotalRows, repository.findAll(specNotGrouped, pageable).getTotalElements());
+		assertThat(repository.findAll(specGrouped, pageable).getTotalElements()).isEqualTo(expectedRowsGrouped);
+		assertThat(repository.findAll(specNotGrouped, pageable).getTotalElements()).isEqualTo(expectedTotalRows);
 	}
 
 	@Test
@@ -116,8 +116,8 @@ class MonkeyJpaRepositoryTest extends MysqlIntegrationContainerConfiguration {
 		Specification<Invoice> specNotGrouped = (root, query, criteriaBuilder) -> criteriaBuilder
 			.equal(root.get("governmentId"), "governmentId");
 
-		assertEquals(expectedRowsGrouped, repository.findAll(specGrouped, pageable).getTotalElements());
-		assertEquals(expectedTotalRows, repository.findAll(specNotGrouped, pageable).getTotalElements());
+		assertThat(repository.findAll(specGrouped, pageable).getTotalElements()).isEqualTo(expectedRowsGrouped);
+		assertThat(repository.findAll(specNotGrouped, pageable).getTotalElements()).isEqualTo(expectedTotalRows);
 	}
 
 }
