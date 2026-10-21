@@ -10,15 +10,17 @@ This project was created to help everyone to create a searchable Rest API :)
 |----------------|---------------------------------|------------------------------------------------------------------------|
 | `:`            | Equal                           | `invoiceKey:ABC123`, `seller.id:10`                                    |
 | `!`            | Not equal                       | `invoiceKey!ABC123`, `seller.id!10`                                    |
-| `>`            | Greater than equal              | `paymentValue>200`, `seller.id>10`, `createdAt>2021-12-23`             |
-| `<`            | Less than equal                 | `paymentValue<200`, `seller.id<10`, `createdAt<2021-12-23`             |
-| `*`            | Starts with                     | `invoiceNumber:*23`, `seller.name:*pe`                                 |
-| `*`            | Ends with                       | `invoiceNumber:AB*`, `seller.name:Feli*`                               |
-| `*`            | Contains                        | `invoiceNumber:*C12*`, `seller.name:*eli*`                             |
+| `>`            | Greater than or equal to        | `paymentValue>200`, `seller.id>10`, `createdAt>2021-12-23`             |
+| `<`            | Less than or equal to           | `paymentValue<200`, `seller.id<10`, `createdAt<2021-12-23`             |
+| `:value*`      | Starts with                     | `invoiceNumber:AB*`, `seller.name:Feli*`                               |
+| `!value*`      | Does not start with             | `invoiceNumber!AB*`, `seller.name!Feli*`                               |
 | `OR`           | Logical OR                      | `invoiceNumber:ABC123 OR seller.name:Felipe`                           |
 | `AND`          | Logical AND                     | `invoiceNumber:ABC123 AND seller.name:Felipe`                          |
 | `IN`           | Value is in list                | `invoiceNumber IN ['123', '456']`, `seller.id IN [1, 2]`               |
-| `()`           | Parenthesis                     | `seller.name:Felipe* OR (invoiceNumber:123 AND createdAt:>2021-12-23)` |
+| `()`           | Parenthesis                     | `seller.name:Felipe* OR (invoiceNumber:123 AND createdAt>2021-12-23)` |
+
+Prefix filters (`:value*` and `!value*`) are case-insensitive. Only a trailing `*` selects a prefix
+operation; ends-with and contains filters are not supported by the current `SearchCriteria` mapping.
 
 
 ## How to use:
@@ -42,7 +44,7 @@ PagedModel<EntityModel<InvoiceEntriesResponse>> findAll(
 }
 ```
 
-Any criterion on the key counts, whatever the operator (`:`, `!`, `>`, `<`, `*`, `IN`) or logical operation
+Any criterion on the key counts, whatever the operator (`:`, `!`, `>`, `<`, `:value*`, `!value*`, `IN`) or logical operation
 (`AND`, `OR`, parenthesis). When a key is missing — or the `search` parameter is missing or empty — the resolver
 throws a `BadRequestException` (`Search parameter must filter by: <keys>`).
 
